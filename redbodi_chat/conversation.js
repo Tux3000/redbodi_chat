@@ -1,8 +1,9 @@
-function Conversation(name, id, owner){
+function Conversation(name, id, owner, firstMessage){
 	this.name = name;
 	this.id = id;
 	this.owner = owner;
 	this.people = [];
+	this.firstMessage = firstMessage;
 	this.status = "available";
 };
 

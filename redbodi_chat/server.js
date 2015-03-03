@@ -17,6 +17,13 @@ app.get('/pharm', function(req, res){
 	res.sendFile(__dirname + '/pharmChat.html');
 });
 
+app.get('/test', function(req, res){
+	res.sendFile(__dirname + '/simpleChatUIDemo.html')
+})
+
+io.on('add pharmacist', function(client){
+	client.emit('conversations', conversations);
+});
 
 io.on('connection', function(client){
 	console.log('user has connected: ' + client.id);
@@ -27,13 +34,13 @@ io.on('connection', function(client){
 
 		if(people[client.id].conversation === null){
 			var id = uuid.v4();
-			var conversation = new Conversation(name, id, client.id);
+			var conversation = new Conversation(name, id, client.id, msg);
 			conversations[id] = conversation;
 
 			addUserToConversation(conversation, name, client);
 
 			client.emit('chatStarted', true);
-			client.broadcast.emit('conversationCreated', {"name" : name, "message" : msg, "conversationId" : id});
+			client.broadcast.emit('conversationCreated', conversation);
 			client.emit('update', 'You have joined a Conversation');
 
 		} else {
@@ -42,7 +49,8 @@ io.on('connection', function(client){
 
 
 	});
-
+	
+//requirement, only one pharmacist can join a conversation
 	client.on('joinConversation', function(id, name){
 		
 		var conversation = conversations[id];
@@ -50,10 +58,14 @@ io.on('connection', function(client){
 		if(client.id === conversation.owner || contains(conversation.people, client.id)){
 			client.emit('update', 'You are already in this conversation');
 		}else {
-			addUserToConversation(conversation, name, client);
-
-			io.in(client.room).emit('update', name + ' has joined the conversation');
-			client.emit('sendConversationId', {id:id});
+			if(addUserToConversation(conversation, name, client)){
+				io.in(client.room).emit('update', name + ' has joined the conversation');
+				client.emit('sendConversationId', {id:id});
+				client.emit('joinedConversation', conversation);
+			}else {
+				client.emit('warning', 'Conversation by... '); //TODO: inform user of the name of pharmacist who has handled the chat
+			}
+			//TODO: broadcast to all pharm client to update their conversation list
 		}
 	});
 
@@ -79,14 +91,20 @@ http.listen(3000, function(){
 });
 
 function addUserToConversation(conversation, name, client){
-	people[client.id] = { "name" : name, "conversation" : conversation.id };
-	people[client.id].conversation = conversation.id;
-	conversation.addPerson(client.id);
-	clients.push(client);
-	client.room = conversation.name;
-	client.join(client.room);
-	
-	console.log(name + ' has joined conversation: ' + conversation.id);
+// TODO: if the conversation has two people in it then return false otherwise:
+	if(conversation.people.length === 2){
+		return false;
+	}else{
+		people[client.id] = { "name" : name, "conversation" : conversation.id };
+		people[client.id].conversation = conversation.id;
+		conversation.addPerson(client.id);
+		clients.push(client);
+		client.room = conversation.name;
+		client.join(client.room);
+		
+		console.log(name + ' has joined conversation: ' + conversation.id);
+		return true;
+	}
 }
 
 function contains(a, obj) {
