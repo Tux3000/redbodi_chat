@@ -23,29 +23,21 @@ io.on('connection', function(client){
 	client.on('startChat', function(name, msg){
 		console.log('startChat has been received');
 		conversationId = null;
-		people[client.id] = { "name" : name, "convesation" : conversationId };
-		
-		//io.socekts.emit('update-people', people);
-		// not sure needed client.emit('conversationList', {conversations: conversations})
-		clients.push(client);
+		people[client.id] = { "name" : name, "conversation" : conversationId }; //TODO check if user is already in conversation
 
-		if(people[client.id].convesation === null){
+		if(people[client.id].conversation === null){
 			var id = uuid.v4();
 			var conversation = new Conversation(name, id, client.id);
 			conversations[id] = conversation;
-			//socket.sockets.emit('conversationList' { conversations: conversations })
-			client.room = name;
-			client.join(client.room);
 
-			conversation.addPerson(client.id);
-			people[client.id].inRoom = id;
+			addUserToConversation(conversation, name, client);
 
 			client.emit('chatStarted', true);
 			client.broadcast.emit('conversationCreated', {"name" : name, "message" : msg, "conversationId" : id});
 			client.emit('update', 'You have joined a Conversation');
 
 		} else {
-			socket.sockets.emit('update', 'You have already started a conversation.');
+			client.emit('update', 'You have already started a conversation.');
 		}
 
 
@@ -58,13 +50,9 @@ io.on('connection', function(client){
 		if(client.id === conversation.owner || contains(conversation.people, client.id)){
 			client.emit('update', 'You are already in this conversation');
 		}else {
-			people[client.id] = {"name" : name, "conversation" : id};
-			console.log('user joined conversation: ' + id);
-			conversation.addPerson(client.id);
-			people[client.id].inRoom = id;
-			client.room = conversation.name;
-			client.join(client.room);
-			io.in(client.conversation).emit('update', name + ' has joined the conversation');
+			addUserToConversation(conversation, name, client);
+
+			io.in(client.room).emit('update', name + ' has joined the conversation');
 			client.emit('sendConversationId', {id:id});
 		}
 	});
@@ -76,11 +64,30 @@ io.on('connection', function(client){
 		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
 	});
 
+	client.on('closeConversation', function(){
+		//only if the client is a pharmacist
+	});
+
+	client.on('disconnect', function(){
+
+	});
+
 });
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
+function addUserToConversation(conversation, name, client){
+	people[client.id] = { "name" : name, "conversation" : conversation.id };
+	people[client.id].conversation = conversation.id;
+	conversation.addPerson(client.id);
+	clients.push(client);
+	client.room = conversation.name;
+	client.join(client.room);
+	
+	console.log(name + ' has joined conversation: ' + conversation.id);
+}
 
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
