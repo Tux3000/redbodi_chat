@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+  	<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="components/angular-bootstrap-simple-chat/src/css/style.css">
+  </head>
+  <body ng-app='app'>
+
+  	<div ng-controller='MsgCtrl' class='container'>
+  		<h1>Messages</h1>
+  		<ul class='list-group'>
+  			<li ng-repeat='msg in msgs' class='list-group-item'>
+  				<strong>Person: </strong> <span>{{ msg }}</span>
+  			</li>
+  		</ul>
+  		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+  		<input ng-model='msgToSend' class='form-control'/>
+  		<button ng-click='sendMessage()' class='btn btn-default'>Send</button>
+  	</div>
+
+  	<div ng-controller='StartChatCtrl' class='container'>
+  		<h1>Start Chat</h1>
+  		<input ng-model='name' class='form-control'/>
+  		<input ng-model='firstMessage' class='form-control'/>
+  		<button ng-click='startChat()' class='btn btn-default'>Send</button>
+  	</div>
+
+	<script src="components/socket.io-client/socket.io.js"></script>
+	<script src="components/angularjs/angular.js"></script>
+	<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+	<script src="components/angular-socket-io/socket.js"></script>
+
+	<script>
+
+	//var socket =io();
+	var app = angular.module('app', [
+		'btford.socket-io'
+		]).
+		factory('mySocket', function(socketFactory)){
+			return socketFactory();
+		}
+
+
+
+
+
+	app.controller('MsgCtrl', function($scope, mySocket){
+		$scope.msgs = [];
+		$scope.alerts = [];
+
+		$scope.$on('firstMessage', function(name, message){
+			appendMessage(message);
+		});
+
+		$scope.sendMessage = function(){
+			mySocket.emit('chatMessage', $scope.msgToSend)
+			appendMessage($scope.msgToSend);
+		}
+
+		$scope.closeAlert = function(index){
+			$scope.alerts.splice(index, 1);
+		};
+
+		mySocket.on('chatMessage', function(clientId, message){
+			appendMessage(message);
+		});
+
+		mySocket.on('update', function(status){
+			$scope.alerts.push({type: 'success', msg: status});
+		});
+
+		function appendMessage(message){
+			$scope.msgs.push({
+				msg: message
+			});
+		}
+	});
+
+	app.controller('StartChatCtrl', function($scope, mySocket){
+		$scope.startChat = function(){
+			if($scope.name && $scope.firstMessage){
+				mySocket.emit('startChat', $scope.name, $scope.firstMessage);
+				$scope.$emit('firstMessage', $scope.name, $scope.firstMessage);
+			}
+		}
+	});
+
+	
+	
+	//TODO: how to hide and show in angular?
+	socket.on('chatStarted', function(hasStarted){
+	  if(hasStarted){
+	    $('#signUp').hide();
+	    $('#messageWindow').show();
+	    //show messageWindow
+	  }
+	});
+
+
+
+	socket.on('conversationCreated', function(conversation){
+		$('#status').append($('<h3>').text('arsenal'));
+	});
+
+
+	socket.on('update', function(status){
+	  $('#status').append($('<h3>').text(status));
+	});
+
+
+	</script>
+  </body>
+</html>

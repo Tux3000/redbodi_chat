@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var uuid = require('node-uuid');
@@ -8,13 +9,16 @@ var people = {};
 var conversations = {};
 var clients = [];
 
+app.use(express.static(__dirname + '/public'));
+app.use('/components', express.static(__dirname + '/components'));
+app.use('/js', express.static(__dirname + '/js'));
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/userChat.html');
+  res.sendFile(__dirname +'/public/userChat.html');
 });
 
 app.get('/pharm', function(req, res){
-	res.sendFile(__dirname + '/pharmChat.html');
+	res.sendFile(__dirname + '/public/pharmChat.html');
 });
 
 app.get('/test', function(req, res){
@@ -87,7 +91,7 @@ io.on('connection', function(client){
 });
 
 http.listen(3000, function(){
-  console.log('listening on *:3000');
+	console.log('listening on *:3000');
 });
 
 function addUserToConversation(conversation, name, client){

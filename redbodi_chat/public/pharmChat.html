@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="components/angular-bootstrap-simple-chat/src/css/style.css">
+	</head>
+	<body ng-app='app'>
+		<h3>Conversations</h3>
+
+		<div ng-controller='ConvsCtrl' class='container'>
+			<ul class='list-group'>
+				<li ng-repeat='conv in convs' class='list-group-item'>
+					<strong>@{{ conv.name }}</strong>
+					<span>{{ conv.firstMessage }}</span>
+				</li>
+			</ul>
+		</div>
+
+		<h3>Chat</h3>
+
+		<div id="chatWindow">
+	  		<ul id="messages"></ul>
+	  	</div>
+
+		<div id="messageWindow">
+	  		<div id ="status"></div>
+	  		<form action="" id="chatForm">
+	  			<input id="m" autocomplete="off" /><button>Send</button>
+	  		</form>
+	  	</div>
+
+
+		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+		<script src="components/socket.io-client/socket.io.js"></script>
+		<script src="components/angularjs/angular.js"></script>
+		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+		<script>
+		var socket =io();
+		var conversations = {};
+		var app = angular.module('app', []);
+		socket.emit('add pharmacist');
+
+		app.controller('ConvsCtrl', function($scope){
+			$scope.addConversation = function(conversation){
+				$scope.convs.push({
+					name: conversation.name,
+					firstMessage: conversation.firstMessage
+				});
+				conversations[conversation.id] = conversation;
+			}
+		});
+
+
+		
+		$('#chatForm').submit(function(){
+			socket.emit('chatMessage', $('#m').val());
+			appendMessage($('#m').val());
+			$('#m').val('');
+			return false;
+		});
+
+		socket.on('conversations', function(convs){
+			for(var key in convs){
+				addConversation(convs[key]);
+			}
+		});
+
+		socket.on('conversationCreated', function(conversation){
+			var button = createButton(conversation["conversationId"])
+			$('#conversationList').append($('<li>').text(conversation.name + " - " + conversation.firstMessage)).append(button);
+			addConversation(conversation);
+		});
+
+		socket.on('chatMessage', function(clientId, message){
+			appendMessage(message);
+		});
+
+		socket.on('joinedConversation', function(conversation){
+			//TODO: remove consersation from the list
+			appendMessage(conversation.firstMessage);
+		});
+
+		/*function addConversation(conversation){
+			conversations[conversation.id] = conversation;
+		}*/
+
+		function createButton(conversationId){
+			var button = $('<button/>', {
+				text: 'Join Conversation',
+
+				id: 'btn_' + conversationId,
+				click: function(){ 
+					socket.emit('joinConversation', conversationId, 'pharmacist');
+				}
+			});
+			return button;
+		}
+
+		function appendMessage(msg){
+	      $('#messages').append($('<li>').text(msg));
+	    }
+
+
+
+		</script>
+
+	</body>
+</html>
