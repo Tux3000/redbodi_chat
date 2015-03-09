@@ -10,10 +10,10 @@
   		<h1>Messages</h1>
   		<ul class='list-group'>
   			<li ng-repeat='msg in msgs' class='list-group-item'>
-  				<strong>Person: </strong> <span>{{ msg }}</span>
+  				<strong>Person: </strong> <span>{{ msg.msg }}</span>
   			</li>
   		</ul>
-  		<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+  		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
   		<input ng-model='msgToSend' class='form-control'/>
   		<button ng-click='sendMessage()' class='btn btn-default'>Send</button>
   	</div>
@@ -36,56 +36,57 @@
 	var app = angular.module('app', [
 		'btford.socket-io'
 		]).
-		factory('mySocket', function(socketFactory)){
+		factory('mySocket', function(socketFactory){
 			return socketFactory();
-		}
-
-
-
-
-
-	app.controller('MsgCtrl', function($scope, mySocket){
-		$scope.msgs = [];
-		$scope.alerts = [];
-
-		$scope.$on('firstMessage', function(name, message){
-			appendMessage(message);
-		});
-
-		$scope.sendMessage = function(){
-			mySocket.emit('chatMessage', $scope.msgToSend)
-			appendMessage($scope.msgToSend);
-		}
-
-		$scope.closeAlert = function(index){
-			$scope.alerts.splice(index, 1);
-		};
-
-		mySocket.on('chatMessage', function(clientId, message){
-			appendMessage(message);
-		});
-
-		mySocket.on('update', function(status){
-			$scope.alerts.push({type: 'success', msg: status});
-		});
-
-		function appendMessage(message){
-			$scope.msgs.push({
-				msg: message
-			});
-		}
-	});
-
-	app.controller('StartChatCtrl', function($scope, mySocket){
-		$scope.startChat = function(){
-			if($scope.name && $scope.firstMessage){
-				mySocket.emit('startChat', $scope.name, $scope.firstMessage);
-				$scope.$emit('firstMessage', $scope.name, $scope.firstMessage);
+		}).
+		controller('StartChatCtrl', function($scope, mySocket, $rootScope){
+			$scope.startChat = function(){
+				if($scope.name && $scope.firstMessage){
+					mySocket.emit('startChat', $scope.name, $scope.firstMessage);
+					$rootScope.$broadcast('firstMessage', $scope.name, $scope.firstMessage);
+					$scope.name = null;
+					$scope.firstMessage = null;
+				}
 			}
-		}
-	});
+		}).
+		controller('MsgCtrl', function($scope, mySocket, $rootScope){
+			$scope.msgs = [];
+			$scope.alerts = [{type: 'success', msg: 'hello'}];
 
-	
+			$rootScope.$on('firstMessage', function(name, message){
+				appendMessage(message);
+			});
+
+			$scope.sendMessage = function(){
+				if($scope.msgToSend){
+					mySocket.emit('chatMessage', $scope.msgToSend);
+					appendMessage($scope.msgToSend);
+					$scope.msgToSend = null;
+				}
+			}
+
+			$scope.closeAlert = function(index){
+				$scope.alerts.splice(index, 1);
+			};
+
+			mySocket.on('chatMessage', function(clientId, message){
+				appendMessage(message);
+			});
+
+			mySocket.on('update', function(status){
+				$scope.alerts.push({type: 'success', msg: status});
+			});
+
+			socket.on('conversationCreated', function(conversation){
+				$scope.alerts.push({type: 'success', 'Conversation created'})
+			});
+
+			function appendMessage(message){
+				$scope.msgs.push({
+					msg: message
+				});
+			}
+	});™
 	
 	//TODO: how to hide and show in angular?
 	socket.on('chatStarted', function(hasStarted){
@@ -97,15 +98,6 @@
 	});
 
 
-
-	socket.on('conversationCreated', function(conversation){
-		$('#status').append($('<h3>').text('arsenal'));
-	});
-
-
-	socket.on('update', function(status){
-	  $('#status').append($('<h3>').text(status));
-	});
 
 
 	</script>

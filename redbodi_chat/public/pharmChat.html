@@ -11,43 +11,74 @@
 				<li ng-repeat='conv in convs' class='list-group-item'>
 					<strong>@{{ conv.name }}</strong>
 					<span>{{ conv.firstMessage }}</span>
+					<button ng-click='joinConversation(conv.id)' class='btn btn-default'>Join</button>
 				</li>
 			</ul>
 		</div>
 
-		<h3>Chat</h3>
+		<h3>Conversations</h3>
+		<hr />
+		
 
-		<div id="chatWindow">
-	  		<ul id="messages"></ul>
+	  	<div ng-controller="ChatTabCtrl">
+	  		<tabset vertical="true" type="pills">
+			    <tab ng-repeat="chat in chats" heading="{{chat.name}}">
+			    	<div ng-controller="MsgCtrl">
+			    		<ul class="list-group">
+			    			<li ng-repeat="msg in msgs" class="list-group-item">
+			    				<strong>Person: </strong> <span>{{msg.msg}}</span>
+			    			</li>
+			    		</ul>
+			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
+				  		<input ng-model='msgToSend' class='form-control'/>
+				  		<button ng-click='sendMessage()' class='btn btn-default'>Send</button>
+			    	</div>
+			    </tab>
+			  </tabset>
 	  	</div>
 
-		<div id="messageWindow">
-	  		<div id ="status"></div>
-	  		<form action="" id="chatForm">
-	  			<input id="m" autocomplete="off" /><button>Send</button>
-	  		</form>
-	  	</div>
 
-
-		<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 		<script src="components/socket.io-client/socket.io.js"></script>
 		<script src="components/angularjs/angular.js"></script>
 		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+		<script src="components/angular-socket-io/socket.js"></script>
 		<script>
+			var app = angular.module('app', [
+				'btford.socket.io'
+				]).
+				factory('ioSocket', function(socketFactory){
+					return socketFactory();
+				}).
+				factory('conversationService', function(){
+					return { conversations: {} };
+				}).
+				controller('ConvsCtrl', function($scope, conversationService, ioSocket){
+					
+					ioSocket.on('conversationCreated', function(conversation){
+						addConversation(conversation);
+					});
+
+					$scope.addConversation = function(conversation){
+						$scope.convs.push({
+							name: conversation.name,
+							firstMessage: conversation.firstMessage
+						});
+						conversationService.conversations[conversation.id] = conversation;
+					}
+					
+				}).
+				controller('ChatTabCtrl', function($scope, conversationService){
+
+				}).
+				controller('MsgCtrl', function($scope, conversationService){
+
+				});
+
 		var socket =io();
 		var conversations = {};
 		var app = angular.module('app', []);
 		socket.emit('add pharmacist');
 
-		app.controller('ConvsCtrl', function($scope){
-			$scope.addConversation = function(conversation){
-				$scope.convs.push({
-					name: conversation.name,
-					firstMessage: conversation.firstMessage
-				});
-				conversations[conversation.id] = conversation;
-			}
-		});
 
 
 		
@@ -79,9 +110,7 @@
 			appendMessage(conversation.firstMessage);
 		});
 
-		/*function addConversation(conversation){
-			conversations[conversation.id] = conversation;
-		}*/
+
 
 		function createButton(conversationId){
 			var button = $('<button/>', {
