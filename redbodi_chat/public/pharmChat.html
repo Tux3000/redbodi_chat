@@ -52,10 +52,14 @@
 				factory('conversationService', function(){
 					return { conversations: {} };
 				}).
-				controller('ConvsCtrl', function($scope, conversationService, ioSocket){
+				controller('ConvsCtrl', function($scope, $rootScope, conversationService, ioSocket){
 					
 					ioSocket.on('conversationCreated', function(conversation){
 						addConversation(conversation);
+					});
+
+					$rootScope.on('joinedConversation', function(conversationId){
+						//some how remove the conversation from convs
 					});
 
 					$scope.addConversation = function(conversation){
@@ -65,68 +69,52 @@
 						});
 						conversationService.conversations[conversation.id] = conversation;
 					}
+
+					$scope.joinConversation = function(conversationId){
+						ioSocket.emit('joinConversation', conversationId);
+					}
 					
 				}).
-				controller('ChatTabCtrl', function($scope, conversationService){
+				controller('ChatTabCtrl', function($scope, $rootScope, conversationService){
+					$scope.chats = [];
+					$scope.msgs = [];
+					$rootScope.on('joinedConversation', function(conversationId){
+						var conv = conversationService.conversations[conversationId];
+						$scope.chats.push({ name: conv.name });
+					});
 
 				}).
-				controller('MsgCtrl', function($scope, conversationService){
+				controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
+					$scope.sendMessage = function(){
+						ioSocket.emit('chatMessage', $scope.msgToSend);
+						appendMessage($scope.msgToSend);
+						msgToSend = null;
+					}
 
+					ioSocket.on('chatMessage', function(clientId, message){
+						appendMessage(message);
+					});
+
+					ioSocket.on('joinedConversation', function(conversation){
+						//TODO: remove consersation from the list
+						$rootScope.emit('joinedConversation', conversation.id);
+						appendMessage(conversation.firstMessage);
+					});
+
+					function appendMessage(message){
+						$scope.msgs.push(message);
+					}
 				});
 
-		var socket =io();
-		var conversations = {};
-		var app = angular.module('app', []);
-		socket.emit('add pharmacist');
 
 
 
-		
-		$('#chatForm').submit(function(){
-			socket.emit('chatMessage', $('#m').val());
-			appendMessage($('#m').val());
-			$('#m').val('');
-			return false;
-		});
-
-		socket.on('conversations', function(convs){
-			for(var key in convs){
-				addConversation(convs[key]);
-			}
-		});
-
-		socket.on('conversationCreated', function(conversation){
-			var button = createButton(conversation["conversationId"])
-			$('#conversationList').append($('<li>').text(conversation.name + " - " + conversation.firstMessage)).append(button);
-			addConversation(conversation);
-		});
-
-		socket.on('chatMessage', function(clientId, message){
-			appendMessage(message);
-		});
-
-		socket.on('joinedConversation', function(conversation){
-			//TODO: remove consersation from the list
-			appendMessage(conversation.firstMessage);
-		});
 
 
 
-		function createButton(conversationId){
-			var button = $('<button/>', {
-				text: 'Join Conversation',
 
-				id: 'btn_' + conversationId,
-				click: function(){ 
-					socket.emit('joinConversation', conversationId, 'pharmacist');
-				}
-			});
-			return button;
-		}
 
-		function appendMessage(msg){
-	      $('#messages').append($('<li>').text(msg));
-	    }
+
 
 
 
