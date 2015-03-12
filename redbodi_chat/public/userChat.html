@@ -20,8 +20,8 @@
 
     <div ng-controller='StartChatCtrl' class='container'>
         <h1>Start Chat</h1>
-        <input ng-model='name' class='form-control'/>
-        <input ng-model='firstMessage' class='form-control'/>
+        <label>Name: </label><input ng-model='name' class='form-control'/>
+        <label>Message: </label><input ng-model='firstMessage' class='form-control'/>
         <button ng-click='startChat()' class='btn btn-default'>Send</button>
     </div>
 

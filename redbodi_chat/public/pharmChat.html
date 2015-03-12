@@ -1,7 +1,7 @@
 <html>
 	<head>
-		<link rel="stylesheet" href="../components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../components/angular-bootstrap-simple-chat/src/css/style.css">
+		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="components/angular-bootstrap-simple-chat/src/css/style.css">
 	</head>
 	<body ng-app='app'>
 		<h3>Conversations</h3>
@@ -16,7 +16,7 @@
 			</ul>
 		</div>
 
-		<h3>Conversations</h3>
+		<h3>Chats</h3>
 		<hr />
 		
 
@@ -38,86 +38,81 @@
 	  	</div>
 
 
-		<script src="../components/socket.io-client/socket.io.js"></script>
-		<script src="../components/angularjs/angular.js"></script>
-		<script src="../components/angularjs-scroll-glue/src/scrollglue.js"></script>
-		<script src="../components/angular-socket-io/socket.js"></script>
+		<script src="components/socket.io-client/socket.io.js"></script>
+		<script src="components/angularjs/angular.js"></script>
+		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+		<script src="components/angular-socket-io/socket.js"></script>
 		<script>
-			var app = angular.module('app', [
-				'btford.socket.io'
-				]).
-				factory('ioSocket', function(socketFactory){
-					return socketFactory();
-				}).
-				factory('conversationService', function(){
-					return { conversations: {} };
-				}).
-				controller('ConvsCtrl', function($scope, $rootScope, conversationService, ioSocket){
+			var app = angular.module('app', ['btford.socket-io'
+        	]).
+        	factory('ioSocket', function(socketFactory){
+            	return socketFactory();
+        	}).
+			factory('conversationService', function(){
+				return { conversations: {} };
+			}).
+			controller('ConvsCtrl', function($scope, $rootScope, conversationService, ioSocket){
+				$scope.convs = [];
+				ioSocket.emit('add pharmacist');
+				ioSocket.on('conversationCreated', function(conversation){
+
+					addConversation(conversation);
+				});
+
+				$rootScope.$on('joinedConversation', function(conversationId){
+					//some how remove the conversation from convs
+				});
+
+				function addConversation (conversation){
 					
-					ioSocket.on('conversationCreated', function(conversation){
-						addConversation(conversation);
+					$scope.convs.push({
+						name: conversation.name,
+						firstMessage: conversation.firstMessage,
+						id: conversation.id
 					});
+					conversationService.conversations[conversation.id] = conversation;
+				}
 
-					$rootScope.on('joinedConversation', function(conversationId){
-						//some how remove the conversation from convs
-					});
+				$scope.joinConversation = function(conversationId){
+					ioSocket.emit('joinConversation', conversationId, 'Pharmacist'); // name to come from session
+				}
+			}).
+			controller('ChatTabCtrl', function($scope, $rootScope, conversationService, ioSocket){
+				$scope.chats = [];
+				
+				//$rootScope.$on('joinedConversation', function(conversationId){
 
-					$scope.addConversation = function(conversation){
-						$scope.convs.push({
-							name: conversation.name,
-							firstMessage: conversation.firstMessage
-						});
-						conversationService.conversations[conversation.id] = conversation;
-					}
-
-					$scope.joinConversation = function(conversationId){
-						ioSocket.emit('joinConversation', conversationId);
-					}
+				//	var conv = conversationService.conversations[conversationId];
 					
-				}).
-				controller('ChatTabCtrl', function($scope, $rootScope, conversationService){
-					$scope.chats = [];
-					$scope.msgs = [];
-					$rootScope.on('joinedConversation', function(conversationId){
-						var conv = conversationService.conversations[conversationId];
-						$scope.chats.push({ name: conv.name });
-					});
+				//});
 
-				}).
-				controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
-					$scope.sendMessage = function(){
-						ioSocket.emit('chatMessage', $scope.msgToSend);
-						appendMessage($scope.msgToSend);
-						msgToSend = null;
-					}
+				ioSocket.on('joinedConversation', function(conversation){
+					//TODO: remove consersation from the list
+					$scope.chats.push({ name: conversation.name });
+					//appendMessage(conversation.firstMessage);
+					//$scope.msgs.push({msg: conversation.firstMessage});
+				});
 
-					ioSocket.on('chatMessage', function(clientId, message){
-						appendMessage(message);
-					});
+			}).
+			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
+				$scope.msgs = [];
+				$scope.sendMessage = function(){
+					ioSocket.emit('chatMessage', $scope.msgToSend);
+					appendMessage($scope.msgToSend);
+					msgToSend = null;
+				}
 
-					ioSocket.on('joinedConversation', function(conversation){
-						//TODO: remove consersation from the list
-						$rootScope.emit('joinedConversation', conversation.id);
-						appendMessage(conversation.firstMessage);
-					});
-
-					function appendMessage(message){
-						$scope.msgs.push(message);
-					}
+				ioSocket.on('chatMessage', function(clientId, message){
+					appendMessage(message);
 				});
 
 
 
-
-
-
-
-
-
-
-
-
-
+				function appendMessage(message){
+					$scope.msgs.push({msg: message});
+				}
+				alert('end of MsgCtrl');
+			});
 		</script>
 
 	</body>
