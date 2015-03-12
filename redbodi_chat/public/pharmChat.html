@@ -22,10 +22,10 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="chat in chats" heading="{{chat.name}}">
+			    <tab ng-repeat="(key, value) in chats" heading="{{chats[key].name}}">
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
-			    			<li ng-repeat="msg in msgs" class="list-group-item">
+			    			<li ng-repeat="msg in chats[key].msgs" class="list-group-item">
 			    				<strong>Person: </strong> <span>{{msg.msg}}</span>
 			    			</li>
 			    		</ul>
@@ -79,39 +79,36 @@
 			}).
 			controller('ChatTabCtrl', function($scope, $rootScope, conversationService, ioSocket){
 				$scope.chats = [];
+				$scope.msgs = {};
 				
-				//$rootScope.$on('joinedConversation', function(conversationId){
-
-				//	var conv = conversationService.conversations[conversationId];
-					
-				//});
 
 				ioSocket.on('joinedConversation', function(conversation){
-					//TODO: remove consersation from the list
-					$scope.chats.push({ name: conversation.name });
+					//TODO: remove conversation from the list
+					$scope.chats.push({ name: conversation.name, id: conversation.id });
 					//appendMessage(conversation.firstMessage);
-					//$scope.msgs.push({msg: conversation.firstMessage});
+					$scope.msgs[conversation.id] = {msg: conversation.firstMessage};
 				});
 
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
-				$scope.msgs = [];
+
 				$scope.sendMessage = function(){
 					ioSocket.emit('chatMessage', $scope.msgToSend);
-					appendMessage($scope.msgToSend);
+					//appendMessage($scope.msgToSend);
 					msgToSend = null;
 				}
 
-				ioSocket.on('chatMessage', function(clientId, message){
-					appendMessage(message);
+				ioSocket.on('chatMessage', function(conversation, message){
+
+					appendMessage(conversation.conversation, message);
 				});
 
 
 
-				function appendMessage(message){
-					$scope.msgs.push({msg: message});
+				function appendMessage(conversationId, message){
+					$scope.msgs[conversationId] = {msg: message};
 				}
-				alert('end of MsgCtrl');
+				
 			});
 		</script>
 
