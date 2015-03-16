@@ -26,7 +26,7 @@
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
 			    			<li ng-repeat="chat in value" class="list-group-item">
-			    				<strong>Person: </strong> <span>{{chat.msg}}</span>
+			    				<strong>{{ chat.sender }}: </strong> <span>{{ chat.msg }}</span>
 			    			</li>
 			    		</ul>
 			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
@@ -86,29 +86,30 @@
 					//TODO: remove conversation from the list
 					$scope.chats[conversation.id] = [];//{ name: conversation.name, id: conversation.id };
 					//appendMessage(conversation.firstMessage);
-					$scope.chats[conversation.id].push({msg: conversation.firstMessage, name: conversation.name});
+					$scope.appendMessage(conversation.id, conversation.firstMessage, conversation.name);
 				});
+
+				$scope.appendMessage = function(conversationId, message, sender){
+					$scope.chats[conversationId].push({msg: message, sender: sender});
+				}
+				
 
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
 
 				$scope.sendMessage = function(convId){
 					ioSocket.emit('chatMessage', $scope.msgToSend);
-					appendMessage(convId, $scope.msgToSend);
+					$scope.appendMessage(convId, $scope.msgToSend, "Pharmacist");
 					$scope.msgToSend = null;
 				}
 
 				ioSocket.on('chatMessage', function(conversation, message){
 
-					appendMessage(conversation.conversation, message);
+					$scope.appendMessage(conversation.conversation, message, conversation.name);
 				});
 
 
 
-				function appendMessage(conversationId, message){
-					var conv = conversationService.conversations[conversationId];
-					$scope.chats[conversationId].push({msg: message, name: conv.name});
-				}
 				
 			});
 		</script>
