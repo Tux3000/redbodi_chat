@@ -22,16 +22,16 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="(key, value) in chats" heading="{{chats[key].name}}">
+			    <tab ng-repeat="(key, value) in chats" heading="test">
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
-			    			<li ng-repeat="msg in chats[key].msgs" class="list-group-item">
-			    				<strong>Person: </strong> <span>{{msg.msg}}</span>
+			    			<li ng-repeat="chat in value" class="list-group-item">
+			    				<strong>Person: </strong> <span>{{chat.msg}}</span>
 			    			</li>
 			    		</ul>
 			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
 				  		<input ng-model='msgToSend' class='form-control'/>
-				  		<button ng-click='sendMessage()' class='btn btn-default'>Send</button>
+				  		<button ng-click='sendMessage(value[0].chatId)' class='btn btn-default'>Send</button>
 			    	</div>
 			    </tab>
 			  </tabset>
@@ -78,24 +78,24 @@
 				}
 			}).
 			controller('ChatTabCtrl', function($scope, $rootScope, conversationService, ioSocket){
-				$scope.chats = [];
-				$scope.msgs = {};
+				$scope.chats = {};
+				
 				
 
 				ioSocket.on('joinedConversation', function(conversation){
 					//TODO: remove conversation from the list
-					$scope.chats.push({ name: conversation.name, id: conversation.id });
+					$scope.chats[conversation.id] = [];//{ name: conversation.name, id: conversation.id };
 					//appendMessage(conversation.firstMessage);
-					$scope.msgs[conversation.id] = {msg: conversation.firstMessage};
+					$scope.chats[conversation.id].push({msg: conversation.firstMessage, chatId: conversation.id, name: conversation.name});
 				});
 
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
 
-				$scope.sendMessage = function(){
+				$scope.sendMessage = function(convId){
 					ioSocket.emit('chatMessage', $scope.msgToSend);
-					//appendMessage($scope.msgToSend);
-					msgToSend = null;
+					appendMessage(convId, $scope.msgToSend);
+					$scope.msgToSend = null;
 				}
 
 				ioSocket.on('chatMessage', function(conversation, message){
@@ -106,7 +106,8 @@
 
 
 				function appendMessage(conversationId, message){
-					$scope.msgs[conversationId] = {msg: message};
+					var conv = conversationService.conversations[conversationId];
+					$scope.chats[conversationId].push({msg: message, chatId: conversationId, name: conv.name});
 				}
 				
 			});
