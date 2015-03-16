@@ -31,7 +31,7 @@
 			    		</ul>
 			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
 				  		<input ng-model='msgToSend' class='form-control'/>
-				  		<button ng-click='sendMessage(value[0].chatId)' class='btn btn-default'>Send</button>
+				  		<button ng-click='sendMessage(key)' class='btn btn-default'>Send</button>
 			    	</div>
 			    </tab>
 			  </tabset>
@@ -86,7 +86,7 @@
 					//TODO: remove conversation from the list
 					$scope.chats[conversation.id] = [];//{ name: conversation.name, id: conversation.id };
 					//appendMessage(conversation.firstMessage);
-					$scope.chats[conversation.id].push({msg: conversation.firstMessage, chatId: conversation.id, name: conversation.name});
+					$scope.chats[conversation.id].push({msg: conversation.firstMessage, name: conversation.name});
 				});
 
 			}).
@@ -107,7 +107,7 @@
 
 				function appendMessage(conversationId, message){
 					var conv = conversationService.conversations[conversationId];
-					$scope.chats[conversationId].push({msg: message, chatId: conversationId, name: conv.name});
+					$scope.chats[conversationId].push({msg: message, name: conv.name});
 				}
 				
 			});

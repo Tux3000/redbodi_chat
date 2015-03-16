@@ -41,7 +41,7 @@
             $scope.startChat = function(){
                 if($scope.name && $scope.firstMessage){
                     ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
-                    $rootScope.$broadcast('firstMessage', $scope.name, $scope.firstMessage);
+                    $rootScope.$broadcast('firstMessage', { name: $scope.name, msg: $scope.firstMessage });
                     $scope.name = null;
                     $scope.firstMessage = null;
                 }
@@ -51,8 +51,8 @@
             $scope.msgs = [];
             $scope.alerts = [{type: 'success', msg: 'hello'}];
 
-            $rootScope.$on('firstMessage', function(name, message){
-                appendMessage(message);
+            $rootScope.$on('firstMessage', function(eventName, data){
+                appendMessage(data.msg);
             });
 
             $scope.sendMessage = function(){
