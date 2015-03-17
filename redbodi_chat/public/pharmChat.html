@@ -1,10 +1,9 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="components/angular-bootstrap-simple-chat/src/css/style.css">
 	</head>
 	<body ng-app='app'>
-		<h3>Conversations</h3>
+		<h3>Queued Conversations</h3>
 
 		<div ng-controller='ConvsCtrl' class='container'>
 			<ul class='list-group'>
@@ -42,8 +41,9 @@
 		<script src="components/angularjs/angular.js"></script>
 		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
 		<script src="components/angular-socket-io/socket.js"></script>
+		<script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 		<script>
-			var app = angular.module('app', ['btford.socket-io'
+			var app = angular.module('app', ['btford.socket-io', 'ui.bootstrap'
         	]).
         	factory('ioSocket', function(socketFactory){
             	return socketFactory();
@@ -59,9 +59,18 @@
 					addConversation(conversation);
 				});
 
-				$rootScope.$on('joinedConversation', function(conversationId){
+				$rootScope.$on('joinedConversation', function(eventName, conversationId){
 					//some how remove the conversation from convs
+					for( index = 0; index < $scope.convs.length; ++index){
+						if($scope.convs[index].id === conversationId){
+							removeConversation(index);
+						}
+					}
 				});
+
+				function removeConversation(index){
+					$scope.convs.splice(index, 1);
+				}
 
 				function addConversation (conversation){
 					
@@ -83,17 +92,14 @@
 				
 
 				ioSocket.on('joinedConversation', function(conversation){
-					//TODO: remove conversation from the list
-					$scope.chats[conversation.id] = [];//{ name: conversation.name, id: conversation.id };
-					//appendMessage(conversation.firstMessage);
+					$scope.chats[conversation.id] = [];
 					$scope.appendMessage(conversation.id, conversation.firstMessage, conversation.name);
+					$rootScope.$broadcast('joinedConversation', conversation.id);
 				});
 
 				$scope.appendMessage = function(conversationId, message, sender){
 					$scope.chats[conversationId].push({msg: message, sender: sender});
 				}
-				
-
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
 
@@ -107,10 +113,6 @@
 
 					$scope.appendMessage(conversation.conversation, message, conversation.name);
 				});
-
-
-
-				
 			});
 		</script>
 
