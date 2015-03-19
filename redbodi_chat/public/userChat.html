@@ -9,7 +9,7 @@
             <h1>Messages</h1>
             <ul class='list-group'>
                 <li ng-repeat='msg in msgs' class='list-group-item'>
-                    <strong>Person: </strong> <span>{{ msg.msg }}</span>
+                    <strong>{{ msg.sender }}: </strong> <span>{{ msg.msg }}</span>
                 </li>
             </ul>
             <alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
@@ -17,7 +17,7 @@
             <button ng-click='sendMessage()' class='btn btn-default'>Send</button>
         </div>
 
-        <div ng-controller='StartChatCtrl' class='container' ng-show='showSignup'>
+        <div ng-controller='SignupCtrl' class='container' ng-show='showSignup'>
             <h1>Start Chat</h1>
             <label>Name: </label><input ng-model='name' class='form-control'/>
             <label>Message: </label><input ng-model='firstMessage' class='form-control'/>
@@ -36,22 +36,26 @@
         factory('ioSocket', function(socketFactory){
             return socketFactory();
         }).
+        factory('userNameService', function(){
+            return {username: null};
+        }).
         controller('ChatSignupCtrl', function($scope, $rootScope){
             $scope.showSignup = true;
             $rootScope.$on('startChat', function(eventName){
                 $scope.showSignup = false;
             });
         }).
-        controller('StartChatCtrl', function($scope, $rootScope, ioSocket){
+        controller('SignupCtrl', function($scope, $rootScope, ioSocket, userNameService){
             $scope.startChat = function(){
                 if($scope.name && $scope.firstMessage){
                     ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
+                    userNameService.username = $scope.name
                     $scope.name = null;
                     $scope.firstMessage = null;
                 }
             }
         }).
-        controller('MsgCtrl', function($scope, $rootScope, ioSocket){
+        controller('MsgCtrl', function($scope, $rootScope, ioSocket, userNameService){
             $scope.msgs = [];
             $scope.alerts = [];
 
@@ -62,7 +66,7 @@
             $scope.sendMessage = function(){
                 if($scope.msgToSend){
                     ioSocket.emit('chatMessage', $scope.msgToSend);
-                    appendMessage($scope.msgToSend);
+                    appendMessage(userNameService.username, $scope.msgToSend);
                     $scope.msgToSend = null;
                 }
             }
@@ -71,8 +75,8 @@
                 $scope.alerts.splice(index, 1);
             };
 
-            ioSocket.on('chatMessage', function(clientId, message){
-                appendMessage(message);
+            ioSocket.on('chatMessage', function(sender, message){
+                appendMessage(sender, message);
             });
 
             ioSocket.on('update', function(status){
@@ -87,8 +91,9 @@
                 }
             });
 
-            function appendMessage(message){
+            function appendMessage(sender, message){
                 $scope.msgs.push({
+                    sender: sender
                     msg: message
                 });
             }
