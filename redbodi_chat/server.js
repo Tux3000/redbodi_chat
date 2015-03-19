@@ -38,10 +38,11 @@ io.on('connection', function(client){
 
 		if(people[client.id].conversation === null){
 			var id = uuid.v4();
-			var conversation = new Conversation(name, id, client.id, msg);
+			var conversation = new Conversation(name, id, client.id);
 			conversations[id] = conversation;
 
 			addUserToConversation(conversation, name, client);
+			addMessageToConversation(conversation, name, msg);
 
 			client.emit('chatStarted', true, conversation);
 			client.broadcast.emit('conversationCreated', conversation);
@@ -73,9 +74,9 @@ io.on('connection', function(client){
 		}
 	});
 
-	client.on('chatMessage', function(message){
-		console.log('message received: ' + message);
-		//var person = people[client.id];
+	client.on('chatMessage', function(conversationId, sender, message){
+		console.log('message received: ' + message + ' from: ' + sender);
+		addConversation(conversations[conversationId], sender, message);
 		console.log(client.room);
 		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
 	});
@@ -93,6 +94,10 @@ io.on('connection', function(client){
 http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
+
+function addMessageToConversation(conversation, sender, message){
+	conversation.addMessage(sender, message);
+}
 
 function addUserToConversation(conversation, name, client){
 // TODO: if the conversation has two people in it then return false otherwise:

@@ -1,9 +1,10 @@
-function Conversation(name, id, owner, firstMessage){
+//TODO: serialize or stick a partial of this class into a DB (mongo?) - must persist messages
+function Conversation(name, id, owner){
 	this.name = name;
 	this.id = id;
 	this.owner = owner;
 	this.people = [];
-	this.firstMessage = firstMessage; //is it the responsibility of Conversation to know the first message?? - probably not...
+	this.messages = [];
 	this.status = "available";
 };
 
@@ -12,5 +13,9 @@ Conversation.prototype.addPerson = function(personId) {
 		this.people.push(personId);
 	}
 };
+
+Conversation.prototype.addMessage = function(sender, message){
+	this.messages.push({sender: sender, msg: message});
+}
 
 module.exports = Conversation;
