@@ -4,26 +4,26 @@
     <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
   </head>
   <body ng-app='app'>
+    <div ng-controller ='ChatSignupCtrl'>
+        <div ng-controller='MsgCtrl' class='container' ng-hide='showSignup'>
+            <h1>Messages</h1>
+            <ul class='list-group'>
+                <li ng-repeat='msg in msgs' class='list-group-item'>
+                    <strong>Person: </strong> <span>{{ msg.msg }}</span>
+                </li>
+            </ul>
+            <alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
+            <input ng-model='msgToSend' class='form-control'/>
+            <button ng-click='sendMessage()' class='btn btn-default'>Send</button>
+        </div>
 
-    <div ng-controller='MsgCtrl' class='container'>
-        <h1>Messages</h1>
-        <ul class='list-group'>
-            <li ng-repeat='msg in msgs' class='list-group-item'>
-                <strong>Person: </strong> <span>{{ msg.msg }}</span>
-            </li>
-        </ul>
-        <alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
-        <input ng-model='msgToSend' class='form-control'/>
-        <button ng-click='sendMessage()' class='btn btn-default'>Send</button>
+        <div ng-controller='StartChatCtrl' class='container' ng-show='showSignup'>
+            <h1>Start Chat</h1>
+            <label>Name: </label><input ng-model='name' class='form-control'/>
+            <label>Message: </label><input ng-model='firstMessage' class='form-control'/>
+            <button ng-click='startChat()' class='btn btn-default'>Send</button>
+        </div>
     </div>
-
-    <div ng-controller='StartChatCtrl' class='container'>
-        <h1>Start Chat</h1>
-        <label>Name: </label><input ng-model='name' class='form-control'/>
-        <label>Message: </label><input ng-model='firstMessage' class='form-control'/>
-        <button ng-click='startChat()' class='btn btn-default'>Send</button>
-    </div>
-
     <script src="components/socket.io-client/socket.io.js"></script>
     <script src="components/angularjs/angular.js"></script>
     <script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
@@ -36,11 +36,16 @@
         factory('ioSocket', function(socketFactory){
             return socketFactory();
         }).
+        controller('ChatSignupCtrl', function($scope, $rootScope){
+            $scope.showSignup = true;
+            $rootScope.$on('startChat', function(eventName){
+                $scope.showSignup = false;
+            });
+        }).
         controller('StartChatCtrl', function($scope, $rootScope, ioSocket){
             $scope.startChat = function(){
                 if($scope.name && $scope.firstMessage){
                     ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
-                    $rootScope.$broadcast('firstMessage', { name: $scope.name, msg: $scope.firstMessage });
                     $scope.name = null;
                     $scope.firstMessage = null;
                 }
@@ -48,7 +53,7 @@
         }).
         controller('MsgCtrl', function($scope, $rootScope, ioSocket){
             $scope.msgs = [];
-            $scope.alerts = [{type: 'success', msg: 'hello'}];
+            $scope.alerts = [];
 
             $rootScope.$on('firstMessage', function(eventName, data){
                 appendMessage(data.msg);
@@ -74,8 +79,12 @@
                 $scope.alerts.push({type: 'success', msg: status});
             });
 
-            ioSocket.on('conversationCreated', function(conversation){
-                $scope.alerts.push({type: 'success', msg: 'Conversation created'})
+            ioSocket.on('chatStarted', function(hasStrarted, conversation){
+                if(hasStrarted){
+                    $scope.alerts.push({type: 'success', msg: 'Conversation created'});
+                    $rootScope.$broadcast('startChat');
+                    $rootScope.$broadcast('firstMessage', { name: conversation.name, msg: conversation.firstMessage });
+                }
             });
 
             function appendMessage(message){

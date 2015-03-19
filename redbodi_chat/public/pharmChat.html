@@ -21,7 +21,7 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="(key, value) in chats" heading="test">
+			    <tab ng-repeat="(key, value) in chats" heading="value.sender">
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
 			    			<li ng-repeat="chat in value" class="list-group-item">

@@ -3,7 +3,7 @@ function Conversation(name, id, owner, firstMessage){
 	this.id = id;
 	this.owner = owner;
 	this.people = [];
-	this.firstMessage = firstMessage;
+	this.firstMessage = firstMessage; //is it the responsibility of Conversation to know the first message?? - probably not...
 	this.status = "available";
 };
 

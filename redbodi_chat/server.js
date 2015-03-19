@@ -43,7 +43,7 @@ io.on('connection', function(client){
 
 			addUserToConversation(conversation, name, client);
 
-			client.emit('chatStarted', true);
+			client.emit('chatStarted', true, conversation);
 			client.broadcast.emit('conversationCreated', conversation);
 			client.emit('update', 'You have joined a Conversation');
 
