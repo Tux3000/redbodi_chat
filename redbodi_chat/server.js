@@ -42,7 +42,7 @@ io.on('connection', function(client){
 			conversations[id] = conversation;
 
 			addUserToConversation(conversation, name, client);
-			addMessageToConversation(conversation, name, msg);
+			addMessageToConversation(conversation, client.id, msg);
 
 			client.emit('chatStarted', true, conversation);
 			client.broadcast.emit('conversationCreated', conversation);
@@ -74,9 +74,9 @@ io.on('connection', function(client){
 		}
 	});
 
-	client.on('chatMessage', function(conversationId, sender, message){
-		console.log('message received: ' + message + ' from: ' + sender);
-		addConversation(conversations[conversationId], sender, message);
+	client.on('chatMessage', function(conversationId, message){
+		console.log('message received: ' + message + ' from: ' + people[client.id].name);
+		addMessageToConversation(conversations[conversationId], client.id, message);
 		console.log(client.room);
 		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
 	});
@@ -95,8 +95,8 @@ http.listen(3000, function(){
 	console.log('listening on *:3000');
 });
 
-function addMessageToConversation(conversation, sender, message){
-	conversation.addMessage(sender, message);
+function addMessageToConversation(conversation, clientId, message){
+	conversation.addMessage(people[clientId].name, message);
 }
 
 function addUserToConversation(conversation, name, client){
