@@ -9,6 +9,8 @@ var people = {};
 var conversations = {};
 var clients = [];
 
+//TODO: have a queued conversations list that is correctly poplated as and when convs are created and pharmcists join them
+
 app.use(express.static(__dirname + '/public'));
 app.use('/components', express.static(__dirname + '/components'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -25,12 +27,14 @@ app.get('/test', function(req, res){
 	res.sendFile(__dirname + '/simpleChatUIDemo.html')
 })
 
-io.on('add pharmacist', function(client){
-	client.emit('conversations', conversations);
-});
-
 io.on('connection', function(client){
 	console.log('user has connected: ' + client.id);
+
+	client.on('pharmacistListener', function(){
+		console.log('pharm added...');
+		client.emit('conversations', conversations);
+	});
+
 	client.on('startChat', function(name, msg){
 		console.log('startChat has been received');
 		conversationId = null;

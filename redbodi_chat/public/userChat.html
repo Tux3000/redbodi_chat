@@ -49,19 +49,22 @@
             $scope.startChat = function(){
                 if($scope.name && $scope.firstMessage){
                     ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
-                    userNameService.username = $scope.name
+                    userNameService.username = $scope.name;
                     $scope.name = null;
                     $scope.firstMessage = null;
                 }
             }
-        }).
-        controller('MsgCtrl', function($scope, $rootScope, ioSocket, userNameService){
+        })
+        .controller('MsgCtrl', function($scope, $rootScope, ioSocket, userNameService){
             $scope.msgs = [];
             $scope.alerts = [];
             $scope.conversationId = null;
 
-            $rootScope.$on('firstMessage', function(eventName, data){
-                appendMessage(userNameService.username, data.msg);
+            $rootScope.$on('firstMessage', function(eventName, conversation){
+                for(var i = 0; i < conversation.messages.length; i++){
+                    var chat = conversation.messages[i];
+                    appendMessage(chat.sender, chat.msg);
+                }
             });
 
             $scope.sendMessage = function(){
@@ -88,19 +91,19 @@
                 if(hasStrarted){
                     $scope.alerts.push({type: 'success', msg: 'Conversation created'});
                     $rootScope.$broadcast('startChat');
-                    $rootScope.$broadcast('firstMessage', { name: conversation.name, msg: conversation.firstMessage });
+                    $rootScope.$broadcast('firstMessage',  conversation);
                     $scope.conversationId = conversation.id;
                 }
             });
 
             function appendMessage(sender, message){
                 $scope.msgs.push({
-                    sender: sender
+                    sender: sender,
                     msg: message
                 });
             }
         });
-    //TODO: how to hide and show in angular?
+
 
 
 

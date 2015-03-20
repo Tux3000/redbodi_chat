@@ -21,7 +21,7 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="(key, value) in chats" heading="value.sender">
+			    <tab ng-repeat="(key, value) in chats" heading="{{ value[0].sender }}">
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
 			    			<li ng-repeat="chat in value" class="list-group-item">
@@ -53,15 +53,15 @@
 			}).
 			controller('ConvsCtrl', function($scope, $rootScope, conversationService, ioSocket){
 				$scope.convs = [];
-				ioSocket.emit('add pharmacist');
+				ioSocket.emit('pharmacistListener');
 				ioSocket.on('conversationCreated', function(conversation){
 
 					addConversation(conversation);
 				});
 
 				ioSocket.on('conversations', function(conversations){
-					for(var c in conversations){
-						addConversation(c);
+					for(var x in conversations){
+						addConversation(conversations[x])
 					}
 				});
 
@@ -82,7 +82,7 @@
 					
 					$scope.convs.push({
 						name: conversation.name,
-						firstMessage: conversation.firstMessage,
+						firstMessage: conversation.messages[0].msg,
 						id: conversation.id
 					});
 					conversationService.conversations[conversation.id] = conversation;
@@ -100,13 +100,15 @@
 				ioSocket.on('joinedConversation', function(conversation){
 					$scope.chats[conversation.id] = [];
 
-					for(var m in conversation.messages){
-						$scope.appendMessage(conversation.id, m.msg, m.sender);
-					}
+					for(var i = 0; i < conversation.messages.length; i++){
+                    	var chat = conversation.messages[i];
+                    	$scope.appendMessage(conversation.id, chat.sender, chat.msg);
+                	}
+
 					$rootScope.$broadcast('joinedConversation', conversation.id);
 				});
 
-				$scope.appendMessage = function(conversationId, message, sender){
+				$scope.appendMessage = function(conversationId, sender, message){
 					$scope.chats[conversationId].push({msg: message, sender: sender});
 				}
 			}).
@@ -114,13 +116,13 @@
 
 				$scope.sendMessage = function(convId){
 					ioSocket.emit('chatMessage', convId, $scope.msgToSend);
-					$scope.appendMessage(convId, $scope.msgToSend, "Pharmacist");
+					$scope.appendMessage(convId, "Pharmacist", $scope.msgToSend);
 					$scope.msgToSend = null;
 				}
 
 				ioSocket.on('chatMessage', function(conversation, message){
 
-					$scope.appendMessage(conversation.conversation, message, conversation.name);
+					$scope.appendMessage(conversation.conversation, conversation.name, message);
 				});
 			});
 		</script>
