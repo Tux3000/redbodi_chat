@@ -59,6 +59,12 @@
 					addConversation(conversation);
 				});
 
+				ioSocket.on('conversations', function(conversations){
+					for(var c in conversations){
+						addConversation(c);
+					}
+				});
+
 				$rootScope.$on('joinedConversation', function(eventName, conversationId){
 					//some how remove the conversation from convs
 					for( index = 0; index < $scope.convs.length; ++index){
@@ -93,7 +99,10 @@
 
 				ioSocket.on('joinedConversation', function(conversation){
 					$scope.chats[conversation.id] = [];
-					$scope.appendMessage(conversation.id, conversation.firstMessage, conversation.name);
+
+					for(var m in conversation.messages){
+						$scope.appendMessage(conversation.id, m.msg, m.sender);
+					}
 					$rootScope.$broadcast('joinedConversation', conversation.id);
 				});
 
@@ -104,7 +113,7 @@
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
 
 				$scope.sendMessage = function(convId){
-					ioSocket.emit('chatMessage', $scope.msgToSend);
+					ioSocket.emit('chatMessage', convId, $scope.msgToSend);
 					$scope.appendMessage(convId, $scope.msgToSend, "Pharmacist");
 					$scope.msgToSend = null;
 				}

@@ -58,14 +58,15 @@
         controller('MsgCtrl', function($scope, $rootScope, ioSocket, userNameService){
             $scope.msgs = [];
             $scope.alerts = [];
+            $scope.conversationId = null;
 
             $rootScope.$on('firstMessage', function(eventName, data){
-                appendMessage(data.msg);
+                appendMessage(userNameService.username, data.msg);
             });
 
             $scope.sendMessage = function(){
                 if($scope.msgToSend){
-                    ioSocket.emit('chatMessage', $scope.msgToSend);
+                    ioSocket.emit('chatMessage', $scope.conversationId, $scope.msgToSend);
                     appendMessage(userNameService.username, $scope.msgToSend);
                     $scope.msgToSend = null;
                 }
@@ -76,7 +77,7 @@
             };
 
             ioSocket.on('chatMessage', function(sender, message){
-                appendMessage(sender, message);
+                appendMessage(sender.name, message);
             });
 
             ioSocket.on('update', function(status){
@@ -88,6 +89,7 @@
                     $scope.alerts.push({type: 'success', msg: 'Conversation created'});
                     $rootScope.$broadcast('startChat');
                     $rootScope.$broadcast('firstMessage', { name: conversation.name, msg: conversation.firstMessage });
+                    $scope.conversationId = conversation.id;
                 }
             });
 
