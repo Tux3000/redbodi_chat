@@ -8,8 +8,7 @@ var Conversation = require('./conversation.js');
 var people = {};
 var conversations = {};
 var clients = [];
-
-//TODO: have a queued conversations list that is correctly poplated as and when convs are created and pharmcists join them
+var queuedConversations = [];
 
 app.use(express.static(__dirname + '/public'));
 app.use('/components', express.static(__dirname + '/components'));
@@ -32,7 +31,7 @@ io.on('connection', function(client){
 
 	client.on('pharmacistListener', function(){
 		console.log('pharm added...');
-		client.emit('conversations', conversations);
+		client.emit('conversations', queuedConversations);
 	});
 
 	client.on('startChat', function(name, msg){
@@ -44,6 +43,7 @@ io.on('connection', function(client){
 			var id = uuid.v4();
 			var conversation = new Conversation(name, id, client.id);
 			conversations[id] = conversation;
+			queuedConversations.push(conversation);
 
 			addUserToConversation(conversation, name, client);
 			addMessageToConversation(conversation, client.id, msg);
@@ -64,6 +64,8 @@ io.on('connection', function(client){
 		
 		var conversation = conversations[id];
 		
+
+
 		if(client.id === conversation.owner || contains(conversation.people, client.id)){
 			client.emit('update', 'You are already in this conversation');
 		}else {
@@ -71,6 +73,10 @@ io.on('connection', function(client){
 				io.in(client.room).emit('update', name + ' has joined the conversation');
 				client.emit('sendConversationId', {id:id});
 				client.emit('joinedConversation', conversation);
+
+				//remove conversation from queue
+				queuedConversations.splice(queuedConversations.indexOf(conversation), 1);
+
 			}else {
 				client.emit('warning', 'Conversation by... '); //TODO: inform user of the name of pharmacist who has handled the chat
 			}

@@ -72,8 +72,8 @@
 				});
 
 				ioSocket.on('conversations', function(conversations){
-					for(var x in conversations){
-						addConversation(conversations[x])
+					for (var i = 0; i< conversations.length; i++){
+						addConversation(conversations[i]);
 					}
 				});
 
