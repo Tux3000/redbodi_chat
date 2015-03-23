@@ -32,9 +32,21 @@
 				  		<input ng-model='msgToSend' class='form-control'/>
 				  		<button ng-click='sendMessage(key)' class='btn btn-default'>Send</button>
 			    	</div>
+
+				  	<h3>User Location</h3>
+				  	<hr />
+				  	<div ng-controller='LocCtrl'>
+				  		<label>Got Location: </label><span>{{ statusMsg }}</span>
+				  		<label>Latitude: </label><span>{{ latitude }}</span>
+				  		<label>Longitude: </label><span>{{ longitude }}</span>
+				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
+				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
+			    	</div>
+
 			    </tab>
 			  </tabset>
 	  	</div>
+
 
 
 		<script src="components/socket.io-client/socket.io.js"></script>
@@ -124,8 +136,48 @@
 
 					$scope.appendMessage(conversation.conversation, conversation.name, message);
 				});
+			}).
+			controller('LocCtrl', function($scope, $rootScope, ioSocket){
+				$scope.latitude = 0;
+				$scope.longitude = 0;
+				$scope.statusMsg = 'N/A';
+
+				$scope.grabLocation = function(conversationId){
+					ioSocket.emit('getUserLocation', conversationId);					
+				}
+
+				//$rootScope.$on('joinedConversation', function(eventName, conversationId){
+				//});
+
+				ioSocket.on('userLocation', function(latitude, longitude, statusMsg){
+					$scope.latitude = latitude;
+					$scope.longitude = longitude;
+					$scope.statusMsg = statusMsg;
+				});
 			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
 		</script>
 
 	</body>
 </html>
+
+
+
+
+
+
+

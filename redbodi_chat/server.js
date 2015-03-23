@@ -85,6 +85,23 @@ io.on('connection', function(client){
 		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
 	});
 
+	client.on('userLocation', function(latitude, longitude, statusMsg){
+		console.log('User location: lat:' + latitude + ' lon:' + longitude +' status: ' + statusMsg);		
+		//set the person's location
+		people[client.id].latitude = latitude;
+		people[client.id].longitude = longitude;
+		people[client.id].locationStatusMsg = statusMsg;
+
+	});
+
+	client.on('getUserLocation', function(conversationId){
+		var user = people[conversations[conversationId].people[0]]; //user is always first one in the list. Can I always count on this asumption? Probably not...
+		client.emit('userLocation', user.latitude, user.longitude, user.locationStatusMsg);
+		//TODO: look up nearest pharmacy to user
+			//send list of nearby pharmacies to pharmacist connected to conversation
+			//would it also be useful to send that list to the user?
+	})
+
 	client.on('closeConversation', function(){
 		//only if the client is a pharmacist
 	});
