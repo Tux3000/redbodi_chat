@@ -21,7 +21,7 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deslect="conversationDeslected(key)">
+			    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deselect="conversationDeselected(key)">
 			    	<tab-heading>{{ value.messages[0].sender }} {{ value.unreadMessages }}</tab-heading>
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
@@ -41,6 +41,8 @@
 				  		<label>Latitude: </label><span>{{ latitude }}</span>
 				  		<label>Longitude: </label><span>{{ longitude }}</span>
 				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
+
+				  		<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
 				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
 			    	</div>
 
@@ -55,9 +57,17 @@
 		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
 		<script src="components/angular-socket-io/socket.js"></script>
 		<script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<script src="components/lodash/dist/loadash.js"></script>
+		<script src="components/angular-google-maps/dist/angular-google-maps.js"></script>
 		<script>
-			var app = angular.module('app', ['btford.socket-io', 'ui.bootstrap'
+			var app = angular.module('app', ['btford.socket-io', 'ui.bootstrap', 'uiGmapgoogle-maps'
         	]).
+        	config(function(uiGmapGoogleMapApiProvider){
+        		uiGmapGoogleMapApiProvider.configure({
+        			key: 'AIzaSyCN3kjctnlbiHAMTdksYv9VU1Q5a0kFD3Y',
+        			v: '3.17'
+        		});
+        	}).
         	factory('ioSocket', function(socketFactory){
             	return socketFactory();
         	}).
@@ -111,7 +121,7 @@
 
 				ioSocket.on('joinedConversation', function(conversation){
 
-					$scope.chats[conversation.id] = { chatSelected: true, unreadMessages: 0, messages: [] };
+					$scope.chats[conversation.id] = { chatSelected: ($scope.chats.length > 1 ? true : false), unreadMessages: 0, messages: [] };
 
 					for(var i = 0; i < conversation.messages.length; i++){
                     	var chat = conversation.messages[i];
@@ -139,9 +149,8 @@
 					$scope.chats[conversationId].chatSelected = true;
 				}
 
-				$scope.conversationDeslected = function(conversationId){
+				$scope.conversationDeselected = function(conversationId){
 					$scope.chats[conversationId].chatSelected = false;
-					alert('deslected');
 				}
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
@@ -153,7 +162,7 @@
 				}
 
 			}).
-			controller('LocCtrl', function($scope, $rootScope, ioSocket){
+			controller('LocCtrl', function($scope, $rootScope, ioSocket, uiGmapGoogleMapApi){
 				$scope.latitude = 0;
 				$scope.longitude = 0;
 				$scope.statusMsg = 'N/A';
@@ -166,7 +175,13 @@
 					$scope.latitude = latitude;
 					$scope.longitude = longitude;
 					$scope.statusMsg = statusMsg;
+
+					$scope.map = { center: { latitude: latitude, longitude: longitude }, zoom: 8 }
 				});
+
+				//uiGmapGoogleMapApi.then(function(maps){
+
+				//});
 			});
 		</script>
 	</body>
