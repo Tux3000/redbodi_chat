@@ -21,14 +21,15 @@
 
 	  	<div ng-controller="ChatTabCtrl">
 	  		<tabset vertical="true" type="pills">
-			    <tab ng-repeat="(key, value) in chats" heading="{{ value[0].sender }}">
+			    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deslect="conversationDeslected(key)">
+			    	<tab-heading>{{ value.messages[0].sender }} {{ value.unreadMessages }}</tab-heading>
 			    	<div ng-controller="MsgCtrl">
 			    		<ul class="list-group">
-			    			<li ng-repeat="chat in value" class="list-group-item">
+			    			<li ng-repeat="chat in value.messages" class="list-group-item">
 			    				<strong>{{ chat.sender }}: </strong> <span>{{ chat.msg }}</span>
 			    			</li>
 			    		</ul>
-			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
+			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{ alert.msg }}</alert>
 				  		<input ng-model='msgToSend' class='form-control'/>
 				  		<button ng-click='sendMessage(key)' class='btn btn-default'>Send</button>
 			    	</div>
@@ -36,7 +37,7 @@
 				  	<h3>User Location</h3>
 				  	<hr />
 				  	<div ng-controller='LocCtrl'>
-				  		<label>Got Location: </label><span>{{ statusMsg }}</span>
+				  		<label>Location Status: </label><span>{{ statusMsg }}</span>
 				  		<label>Latitude: </label><span>{{ latitude }}</span>
 				  		<label>Longitude: </label><span>{{ longitude }}</span>
 				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
@@ -78,7 +79,6 @@
 				});
 
 				$rootScope.$on('joinedConversation', function(eventName, conversationId){
-					//some how remove the conversation from convs
 					for( index = 0; index < $scope.convs.length; ++index){
 						if($scope.convs[index].id === conversationId){
 							removeConversation(index);
@@ -110,7 +110,8 @@
 				
 
 				ioSocket.on('joinedConversation', function(conversation){
-					$scope.chats[conversation.id] = [];
+
+					$scope.chats[conversation.id] = { chatSelected: true, unreadMessages: 0, messages: [] };
 
 					for(var i = 0; i < conversation.messages.length; i++){
                     	var chat = conversation.messages[i];
@@ -120,8 +121,27 @@
 					$rootScope.$broadcast('joinedConversation', conversation.id);
 				});
 
+				ioSocket.on('chatMessage', function(conversation, message){
+					
+					$scope.appendMessage(conversation.conversation, conversation.name, message);
+				});
+				
+
 				$scope.appendMessage = function(conversationId, sender, message){
-					$scope.chats[conversationId].push({msg: message, sender: sender});
+					$scope.chats[conversationId].messages.push({msg: message, sender: sender});
+					if(!$scope.chats[conversationId].chatSelected){
+						$scope.chats[conversationId].unreadMessages+=1;
+					}
+				}
+
+				$scope.conversationSelected = function(conversationId){
+					$scope.chats[conversationId].unreadMessages = 0;
+					$scope.chats[conversationId].chatSelected = true;
+				}
+
+				$scope.conversationDeslected = function(conversationId){
+					$scope.chats[conversationId].chatSelected = false;
+					alert('deslected');
 				}
 			}).
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
@@ -132,10 +152,6 @@
 					$scope.msgToSend = null;
 				}
 
-				ioSocket.on('chatMessage', function(conversation, message){
-
-					$scope.appendMessage(conversation.conversation, conversation.name, message);
-				});
 			}).
 			controller('LocCtrl', function($scope, $rootScope, ioSocket){
 				$scope.latitude = 0;
@@ -146,32 +162,13 @@
 					ioSocket.emit('getUserLocation', conversationId);					
 				}
 
-				//$rootScope.$on('joinedConversation', function(eventName, conversationId){
-				//});
-
 				ioSocket.on('userLocation', function(latitude, longitude, statusMsg){
 					$scope.latitude = latitude;
 					$scope.longitude = longitude;
 					$scope.statusMsg = statusMsg;
 				});
 			});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			
 		</script>
-
 	</body>
 </html>
 

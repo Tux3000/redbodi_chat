@@ -10,6 +10,9 @@ var conversations = {};
 var clients = [];
 var queuedConversations = [];
 
+
+
+
 app.use(express.static(__dirname + '/public'));
 app.use('/components', express.static(__dirname + '/components'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -88,6 +91,20 @@ io.on('connection', function(client){
 		console.log('message received: ' + message + ' from: ' + people[client.id].name);
 		addMessageToConversation(conversations[conversationId], client.id, message);
 		console.log(client.room);
+		var clients = io.sockets.adapter.rooms[client.room];   
+
+		//to get the number of clients
+		var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
+
+		for (var clientId in clients ) {
+
+		     //this is the socket of each client in the room.
+		     var clientSocket = io.sockets.connected[clientId];
+
+		     //you can do whatever you need with this
+		     console.log(clientId);
+
+		}
 		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
 	});
 
