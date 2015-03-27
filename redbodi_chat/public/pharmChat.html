@@ -42,7 +42,7 @@
 				  		<label>Longitude: </label><span>{{ longitude }}</span>
 				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
 
-				  		<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>
+				  		<!--<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>-->
 				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
 			    	</div>
 
@@ -162,7 +162,7 @@
 				}
 
 			}).
-			controller('LocCtrl', function($scope, $rootScope, ioSocket, uiGmapGoogleMapApi){
+			controller('LocCtrl', function($scope, $rootScope, ioSocket){
 				$scope.latitude = 0;
 				$scope.longitude = 0;
 				$scope.statusMsg = 'N/A';
@@ -176,7 +176,7 @@
 					$scope.longitude = longitude;
 					$scope.statusMsg = statusMsg;
 
-					$scope.map = { center: { latitude: latitude, longitude: longitude }, zoom: 8 }
+					//$scope.map = { center: { latitude: latitude, longitude: longitude }, zoom: 8 };
 				});
 
 				//uiGmapGoogleMapApi.then(function(maps){

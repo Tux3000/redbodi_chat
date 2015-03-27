@@ -73,7 +73,7 @@ io.on('connection', function(client){
 			client.emit('update', 'You are already in this conversation');
 		}else {
 			if(addUserToConversation(conversation, name, client)){
-				io.in(client.room).emit('update', name + ' has joined the conversation');
+				io.in(id).emit('update', name + ' has joined the conversation');
 				client.emit('sendConversationId', {id:id});
 				client.emit('joinedConversation', conversation);
 
@@ -90,22 +90,9 @@ io.on('connection', function(client){
 	client.on('chatMessage', function(conversationId, message){
 		console.log('message received: ' + message + ' from: ' + people[client.id].name);
 		addMessageToConversation(conversations[conversationId], client.id, message);
-		console.log(client.room);
-		var clients = io.sockets.adapter.rooms[client.room];   
-
-		//to get the number of clients
-		var numClients = (typeof clients !== 'undefined') ? Object.keys(clients).length : 0;
-
-		for (var clientId in clients ) {
-
-		     //this is the socket of each client in the room.
-		     var clientSocket = io.sockets.connected[clientId];
-
-		     //you can do whatever you need with this
-		     console.log(clientId);
-
-		}
-		client.broadcast.to(client.room).emit('chatMessage', people[client.id], message);
+		console.log('room: ' + conversationId);
+		
+		client.broadcast.to(conversationId).emit('chatMessage', people[client.id], message);
 	});
 
 	client.on('userLocation', function(latitude, longitude, statusMsg){
@@ -152,8 +139,8 @@ function addUserToConversation(conversation, name, client){
 		people[client.id].conversation = conversation.id;
 		conversation.addPerson(client.id);
 		clients.push(client);
-		client.room = conversation.name;
-		client.join(client.room);
+		//client.room = conversation.id;
+		client.join(conversation.id);
 		
 		console.log(name + ' has joined conversation: ' + conversation.id);
 		return true;
