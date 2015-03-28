@@ -16,6 +16,7 @@ var queuedConversations = [];
 app.use(express.static(__dirname + '/public'));
 app.use('/components', express.static(__dirname + '/components'));
 app.use('/js', express.static(__dirname + '/js'));
+app.use('/css', express.static(__dirname + '/css'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname +'/public/userChat.html');

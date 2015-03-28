@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/map.css">
 	</head>
 	<body ng-app='app'>
 		<h3>Queued Conversations</h3>
@@ -37,12 +38,24 @@
 				  	<h3>User Location</h3>
 				  	<hr />
 				  	<div ng-controller='LocCtrl'>
+				  		<!--<div class="map_container">
+				  			<google-map center="map.center" zoom="map.zoom" draggable="true" options="map.options" control="map.control">
+
+				  				<markers models="map.markers" coords="'self'" options="'options'" isLabel='true'>
+				  				</markers>
+
+				  			</google-map>
+				  		</div>-->
+
 				  		<label>Location Status: </label><span>{{ statusMsg }}</span>
 				  		<label>Latitude: </label><span>{{ latitude }}</span>
 				  		<label>Longitude: </label><span>{{ longitude }}</span>
 				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
 
-				  		<!--<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>-->
+				  		<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+				  			<ui-gmap-markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel='true'>
+        					</ui-gmap-markers>
+				  		</ui-gmap-google-map>
 				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
 			    	</div>
 
@@ -51,20 +64,20 @@
 	  	</div>
 
 
-
+		<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=en"></script>
 		<script src="components/socket.io-client/socket.io.js"></script>
 		<script src="components/angularjs/angular.js"></script>
 		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
 		<script src="components/angular-socket-io/socket.js"></script>
 		<script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-		<script src="components/lodash/dist/loadash.js"></script>
+		<script src="components/lodash/dist/lodash.js"></script>
 		<script src="components/angular-google-maps/dist/angular-google-maps.js"></script>
 		<script>
 			var app = angular.module('app', ['btford.socket-io', 'ui.bootstrap', 'uiGmapgoogle-maps'
         	]).
         	config(function(uiGmapGoogleMapApiProvider){
         		uiGmapGoogleMapApiProvider.configure({
-        			key: 'AIzaSyCN3kjctnlbiHAMTdksYv9VU1Q5a0kFD3Y',
+        			key: '<api_key>',
         			v: '3.17'
         		});
         	}).
@@ -73,6 +86,37 @@
         	}).
 			factory('conversationService', function(){
 				return { conversations: {} };
+			}).
+			factory('MarkerCreatorService', function(){
+				var markerId = 0;
+				function create(latitude, longitude){
+					var marker = {
+						options: {
+							animation: 0,
+							labelAnchor: '28 -5',
+							labelClass: 'markerlabel'
+						},
+						latitude: latitude,
+						longitude: longitude,
+						id: ++markerId,
+						title: 'yo mama!'
+					};
+					marker.content = '<div class="infoWindowContent">test</div>';
+					return marker;
+				}
+
+				function invokeSuccessCallback(successCallback, marker) {
+			        if (typeof successCallback === 'function') {
+			            successCallback(marker);
+			        }
+			    }
+
+				function createByCoords(latitude, longitude, successCallback){
+					var marker = create(latitude, longitude);
+					invokeSuccessCallback(successCallback, marker);
+				}
+
+				return { createByCoords: createByCoords };
 			}).
 			controller('ConvsCtrl', function($scope, $rootScope, conversationService, ioSocket){
 				$scope.convs = [];
@@ -162,7 +206,7 @@
 				}
 
 			}).
-			controller('LocCtrl', function($scope, $rootScope, ioSocket){
+			controller('LocCtrl', function($scope, $rootScope, ioSocket, MarkerCreatorService){
 				$scope.latitude = 0;
 				$scope.longitude = 0;
 				$scope.statusMsg = 'N/A';
@@ -176,14 +220,27 @@
 					$scope.longitude = longitude;
 					$scope.statusMsg = statusMsg;
 
-					//$scope.map = { center: { latitude: latitude, longitude: longitude }, zoom: 8 };
+					MarkerCreatorService.createByCoords(latitude, longitude, function(marker){
+						marker.options.labelContent = 'user',
+						$scope.userMarker = marker;
+					});
+
+					$scope.map = { 
+						center:{ 
+							latitude: latitude, 
+							longitude: longitude 
+						}, 
+						zoom: 12,
+						markers: []
+					};
+					$scope.map.markers.push($scope.userMarker);
 				});
 
 				//uiGmapGoogleMapApi.then(function(maps){
 
 				//});
 			});
-		</script>
+		</script>	
 	</body>
 </html>
 
