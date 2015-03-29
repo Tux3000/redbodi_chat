@@ -37,15 +37,7 @@
 
 				  	<h3>User Location</h3>
 				  	<hr />
-				  	<div ng-controller='LocCtrl'>
-				  		<!--<div class="map_container">
-				  			<google-map center="map.center" zoom="map.zoom" draggable="true" options="map.options" control="map.control">
-
-				  				<markers models="map.markers" coords="'self'" options="'options'" isLabel='true'>
-				  				</markers>
-
-				  			</google-map>
-				  		</div>-->
+				  	<div class="angular-google-map-container" ng-controller='LocCtrl'>
 
 				  		<label>Location Status: </label><span>{{ statusMsg }}</span>
 				  		<label>Latitude: </label><span>{{ latitude }}</span>
@@ -53,8 +45,16 @@
 				  		<button ng-click='grabLocation(key)'>Grab User Location</button>
 
 				  		<ui-gmap-google-map center='map.center' zoom='map.zoom'>
-				  			<ui-gmap-markers models="map.markers" coords="'self'" icon="'icon'" options="'options'" isLabel='true'>
+					  		
+
+				  			<ui-gmap-markers models="map.markers" idkey="'id'" coords="'coords'" icon="'icon'" options="'options'" isLabel='true' click="'onClick'" events="'events'">
+
+				  				<ui-gmap-windows coords="'self'" options="windowOptions" closeClick="closeClick()">
+           							<div ng-non-bindable>{{title}}</div>
+        						</ui-gmap-windows>
+
         					</ui-gmap-markers>
+	        					
 				  		</ui-gmap-google-map>
 				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
 			    	</div>
@@ -89,19 +89,22 @@
 			}).
 			factory('MarkerCreatorService', function(){
 				var markerId = 0;
-				function create(latitude, longitude){
+				function create(latitude, longitude, message){
 					var marker = {
 						options: {
 							animation: 0,
-							labelAnchor: '28 -5',
-							labelClass: 'markerlabel'
 						},
-						latitude: latitude,
-						longitude: longitude,
+						coords: {
+							latitude: latitude,
+							longitude: longitude
+						},
 						id: ++markerId,
-						title: 'yo mama!'
+						title: message,
+						show: false
 					};
-					marker.content = '<div class="infoWindowContent">test</div>';
+					marker.onClick = function(){
+						marker.show = !marker.show;
+					};
 					return marker;
 				}
 
@@ -111,8 +114,8 @@
 			        }
 			    }
 
-				function createByCoords(latitude, longitude, successCallback){
-					var marker = create(latitude, longitude);
+				function createByCoords(latitude, longitude, message, successCallback){
+					var marker = create(latitude, longitude, message);
 					invokeSuccessCallback(successCallback, marker);
 				}
 
@@ -220,8 +223,7 @@
 					$scope.longitude = longitude;
 					$scope.statusMsg = statusMsg;
 
-					MarkerCreatorService.createByCoords(latitude, longitude, function(marker){
-						marker.options.labelContent = 'user',
+					MarkerCreatorService.createByCoords(latitude, longitude, "User is here", function(marker){
 						$scope.userMarker = marker;
 					});
 
@@ -234,6 +236,8 @@
 						markers: []
 					};
 					$scope.map.markers.push($scope.userMarker);
+	
+
 				});
 
 				//uiGmapGoogleMapApi.then(function(maps){
