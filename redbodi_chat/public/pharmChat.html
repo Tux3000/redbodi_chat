@@ -2,6 +2,7 @@
 	<head>
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/map.css">
+		<link rel="stylesheet" href="css/chat.css">
 	</head>
 	<body ng-app='app'>
 		<div class="container">
@@ -30,29 +31,61 @@
 					</div>
 				</div>
 				
-			  	<div ng-controller="ChatTabCtrl" class="col-md-8">
+			  	<div ng-controller="ChatTabCtrl" class="col-md-5">
 			  		<tabset justified="true">
 					    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deselect="conversationDeselected(key)">
 					    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
 
-					    	<div ng-controller="MsgCtrl" class="panel panel-info">
-					    		<div class="panel-heading">Messages</div>
+					    	<div ng-controller="MsgCtrl" class="panel panel-primary">
+					    		<div class="panel-heading">
+					    			<span class="glyphicon glyphicon-comment"></span> Chat
+			                        <div class="btn-group pull-right">
+			                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+			                                <span class="glyphicon glyphicon-chevron-down"></span>
+			                            </button>
+			                            <ul class="dropdown-menu slidedown">
+			                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
+			                                </span>Refresh</a></li>
+			                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
+			                                </span>Available</a></li>
+			                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
+			                                </span>Busy</a></li>
+			                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
+			                                    Away</a></li>
+			                                <li class="divider"></li>
+			                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
+			                                    Sign Out</a></li>
+			                            </ul>
+			                        </div>
+					    		</div>
 					    		<div class="panel-body">
-						    		<ul class="media-list">
-						    			<li ng-repeat="chat in value.messages" class="media">
-						    				<div class="media-body">
-						    					<div class="media">
-						    						<span class="pull-left">Avatar</span>
-						    						<div class="media-body">
-						    							<span>{{ chat.msg }}</span>
-						    						</div>
-						    						<br />
-						    						<small class="text-muted">
-						    							{{ chat.sender }} | date at time
-						    						</small>
-						    						<hr />
-						    					</div>
-						    				</div>
+						    		<ul class="chat">
+						    			<li ng-repeat="chat in value.messages" class="{{chat.msgOptions.pullSide}} clearfix">
+						    				<span class="chat-img pull-{{chat.msgOptions.pullSide}}">
+		                                    <img src="http://placehold.it/50/{{chat.msgOptions.avatarColour}}/fff&text={{chat.msgOptions.avatar}}" alt="User Avatar" class="img-circle" />
+
+		                                	</span>
+
+
+
+					    					<div class="chat-body clearfix">
+					    						<div ng-if="chat.msgOptions.pullSide==='left'">
+			                                        <div class="header">
+			                                            <strong class=" primary-font"> {{ chat.sender }} </strong><small class="pull-right text-muted">
+			                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><!--TODO: time to come from model-->
+			                                        </div>
+			                                    </div>  
+			                                    <div ng-if="chat.msgOptions.pullSide==='right'">
+			                                        <div class="header">
+			                                            <small class=" text-muted">
+			                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><strong class="pull-right primary-font"> {{ chat.sender }} </strong><!--TODO: time to come from model-->
+			                                        </div>
+			                                    </div>  
+
+												<p>
+                                        			{{ chat.msg }}
+                                    			</p>
+					    					</div>
 						    			</li>
 						    		</ul>
 					    		</div>
@@ -61,7 +94,7 @@
 					    			<div class="input-group">
 								  		<input ng-model='msgToSend' class='form-control' placeholder="Enter message"/>
 								  		<span class="input-group-btn">
-								  			<button ng-click='sendMessage(key)' class='btn btn-info'>Send</button>
+								  			<button ng-click='sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
 								  		</span>
 							  		</div>
 						  		</div>
@@ -219,10 +252,31 @@
 				
 
 				$scope.appendMessage = function(conversationId, sender, message){
-					$scope.chats[conversationId].messages.push({msg: message, sender: sender});
+					
+
 					if(!$scope.chats[conversationId].chatSelected){
 						$scope.chats[conversationId].unreadMessages+=1;
 					}
+
+					var msgOptions={
+						pullSide: 'left',
+						oppositeSide: 'right',
+						avatar: 'U',
+						avatarColour: '55C1E7'
+					};
+
+					if(sender === 'Pharmacist'){
+						msgOptions.pullSide = 'right';
+	                    msgOptions.oppositeSide = 'left';
+	                    msgOptions.avatar = 'P';
+	                    msgOptions.avatarColour = 'FA6F57';
+					}
+
+					$scope.chats[conversationId].messages.push({
+						msg: message, 
+						sender: sender,
+						msgOptions: msgOptions
+					});
 				}
 
 				$scope.conversationSelected = function(conversationId){

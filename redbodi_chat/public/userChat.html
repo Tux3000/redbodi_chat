@@ -201,15 +201,15 @@
 
             function appendMessage(sender, message){
                 var msgOptions = {
-                    pullSide: 'right',
-                    oppositeSide: 'left',
+                    pullSide: 'left',
+                    oppositeSide: 'right',
                     avatar: 'P',
                     avatarColour: 'FA6F57'
                 }; 
 
                 if(userNameService.username === sender){
-                    msgOptions.pullSide = 'left';
-                    msgOptions.oppositeSide = 'right';
+                    msgOptions.pullSide = 'right';
+                    msgOptions.oppositeSide = 'left';
                     msgOptions.avatar = 'U';
                     msgOptions.avatarColour = '55C1E7';
                 }
