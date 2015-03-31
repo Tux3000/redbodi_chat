@@ -4,42 +4,68 @@
     <link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/chat.css">
   </head>
-  <body ng-app='app' style="font-family:Verdana">
+  <body ng-app='app'>
     <div class="container">
-        <div class="row " style="padding-top:40px;">
-            <div ng-controller ='ChatSignupCtrl'class="col-md-8">
+        <div class="row" style="padding-top:40px;">
+            <div ng-controller ='ChatSignupCtrl'class="col-md-5">
                 
-                <div ng-controller='MsgCtrl' class='panel panel-info' ng-hide='showSignup'>
+                <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='showSignup'>
                     <div class="panel-heading">
-                        Messages
+                        <span class="glyphicon glyphicon-comment"></span> Chat
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-chevron-down"></span>
+                            </button>
+                            <ul class="dropdown-menu slidedown">
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
+                                </span>Refresh</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
+                                </span>Available</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
+                                </span>Busy</a></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
+                                    Away</a></li>
+                                <li class="divider"></li>
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
+                                    Sign Out</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="panel-body">
-                        <ul class='media-list'>
-                            <li ng-repeat='msg in msgs' class='media'>
-                                <div class="media-body">
-                                    <div class="media">
-                                        <span class="pull-left">
-                                            <strong> Img here </strong>
-                                        </span>
-                                        <div class="media-body">
-                                            <span>{{ msg.msg }}</span>
-                                            <br />
-                                            <small class="text-muted">
-                                                {{ msg.sender }} | data at time</small>
-                                            <hr />
+                        <ul class="chat">
+                            <!--TODO: left right to come from model-->
+                            <li ng-repeat='msg in msgs' class="{{msg.msgOptions.pullSide}} clearfix"><span class="chat-img pull-{{msg.msgOptions.pullSide}}">
+                                    <img src="http://placehold.it/50/{{msg.msgOptions.avatarColour}}/fff&text={{msg.msgOptions.avatar}}" alt="User Avatar" class="img-circle" />
+
+                                </span>
+
+                                <div class="chat-body clearfix">
+                                    <div ng-if="msg.msgOptions.pullSide==='left'">
+                                        <div class="header">
+                                            <strong class=" primary-font"> {{ msg.sender }} </strong><small class="pull-right text-muted">
+                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><!--TODO: time to come from model-->
                                         </div>
-                                    </div>
+                                    </div>  
+                                    <div ng-if="msg.msgOptions.pullSide==='right'">
+                                        <div class="header">
+                                            <small class=" text-muted">
+                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><strong class="pull-right primary-font"> {{ msg.sender }} </strong><!--TODO: time to come from model-->
+                                        </div>
+                                    </div>  
+                                    <p>
+                                        {{ msg.msg }}
+                                    </p>
                                 </div>
 
                             </li>
                         </ul>
                     </div>
-                    <alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>
+                    <!--<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>-->
                     <div class="panel-footer">
                         <div class="input-group">
-                            <input ng-model='msgToSend' class='form-control' placeholder="Enter message"/>
+                            <input ng-model='msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
                             <span class="input-group-btn">
-                                <button ng-click='sendMessage()' class='btn btn-info'>Send</button>
+                                <button ng-click='sendMessage()' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
                             </span>
                         </div>
                     </div>
@@ -175,9 +201,24 @@
             });
 
             function appendMessage(sender, message){
+                var msgOptions = {
+                    pullSide: 'right',
+                    oppositeSide: 'left',
+                    avatar: 'P',
+                    avatarColour: 'FA6F57'
+                }; 
+
+                if(userNameService.username === sender){
+                    msgOptions.pullSide = 'left';
+                    msgOptions.oppositeSide = 'right';
+                    msgOptions.avatar = 'U';
+                    msgOptions.avatarColour = '55C1E7';
+                }
+
                 $scope.msgs.push({
                     sender: sender,
-                    msg: message
+                    msg: message,
+                    msgOptions: msgOptions
                 });
             }
         });

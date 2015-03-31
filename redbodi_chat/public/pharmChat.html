@@ -33,7 +33,7 @@
 			  	<div ng-controller="ChatTabCtrl" class="col-md-8">
 			  		<tabset justified="true">
 					    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deselect="conversationDeselected(key)">
-					    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-bell"></i></span></tab-heading>
+					    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
 
 					    	<div ng-controller="MsgCtrl" class="panel panel-info">
 					    		<div class="panel-heading">Messages</div>
