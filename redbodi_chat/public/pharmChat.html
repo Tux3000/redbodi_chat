@@ -237,9 +237,11 @@
 			controller('MsgCtrl', function($scope, $rootScope, conversationService, ioSocket){
 
 				$scope.sendMessage = function(convId){
-					ioSocket.emit('chatMessage', convId, $scope.msgToSend);
-					$scope.appendMessage(convId, "Pharmacist", $scope.msgToSend);
-					$scope.msgToSend = null;
+					if($scope.msgToSend){
+						ioSocket.emit('chatMessage', convId, $scope.msgToSend);
+						$scope.appendMessage(convId, "Pharmacist", $scope.msgToSend);
+						$scope.msgToSend = null;
+					}
 				}
 
 			}).
