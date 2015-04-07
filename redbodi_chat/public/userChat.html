@@ -7,7 +7,7 @@
   <body ng-app='app'>
     <div class="container">
         <div class="row" style="padding-top:40px;">
-            <div ng-controller ='ChatSignupCtrl'class="col-md-5">
+            <div ng-controller ='ChatSignupCtrl'class="col-md-8">
                 
                 <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='showSignup'>
                     <div class="panel-heading">
@@ -72,11 +72,47 @@
 
 
                 </div>
-                <div ng-controller='SignupCtrl' class='container' ng-show='showSignup'>
-                    <h1>Start Chat</h1>
-                    <label>Name: </label><input ng-model='name' class='form-control'/>
-                    <label>Message: </label><input ng-model='firstMessage' class='form-control'/>
-                    <button ng-click='startChat()' class='btn btn-info'>Send</button>
+                <div ng-controller='SignupCtrl' class='panel panel-primary' ng-show='showSignup'>
+                    <div class="panel-heading">
+                        <span>Start Chat</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="input-group">
+                            <input ng-model='name' class='form-control input-sm' placeholder="What is your name?" /><button type="button" tooltip="See? Now click away..."  tooltip-trigger="focus" tooltip-placement="right"><span class="glyphicon glyphicon-question-sign"></span></button>
+                            <input ng-model='email' class='form-control input-sm' placeholder="What is your email address?"/>
+                            <input ng-model='dob' class='form-control input-sm' placeholder="When were you born?"/>
+                            <span>
+                                <div ng-controller="TermsCtrl">
+                                    <script type="text/ng-template" id="myModalContent.html">
+                                        <div class="modal-header">
+                                            <h3 class="modal-title">Terms and Conditions</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            //these are the terms
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-primary" ng-click="agree()">Agree</button>
+                                            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                                        </div>
+                                    </script>
+                                    Agree to <a ng-click="openTerms()">Terms and Conditions</a> <input type="checkbox" ng-model="hasAgreed" />
+                                    <a href="" ng-click="test()"></a>
+                                </div>
+
+
+
+                            </span>
+
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input ng-model='firstMessage' class='form-control input-sm' placeholder="Type your message here..."/>
+                            <span class="input-group-btn">
+                                <button ng-click='startChat()' class='btn btn-warning btn-sm' id="btn-signup">Send</button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -221,6 +257,38 @@
                     msgOptions: msgOptions
                 });
             }
+        }).controller('TermsCtrl', function($scope, $modal){
+            $scope.hasAgreed = false;
+
+            $scope.openTerms = function(){
+                var modalInstance = $modal.open({
+                    templateUrl: 'myModalContent.html',
+                    controller: 'ModalInstanceCtrl',
+                    resolve:{
+                        items: function(){
+                            return $scope.hasAgreed
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function(hasAgreed){
+                    $scope.hasAgreed = hasAgreed;
+                },function(){
+                    $scope.hasAgreed = false;
+                });
+            };
+        }).controller('ModalInstanceCtrl', function($scope, $modalInstance){
+            $scope.agreed = false;
+
+            $scope.agree = function(){
+                $scope.agreed = true;
+                $modalInstance.close($scope.agreed);
+            };
+
+            $scope.cancel = function(){
+                $modalInstance.dismiss('cancel');
+            };
+
         });
 
 
