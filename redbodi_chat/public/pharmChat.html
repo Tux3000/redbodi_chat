@@ -204,6 +204,10 @@
 					}
 				});
 
+				ioSocket.on('conversationAnswered', function(conversationId){
+					removeConversation($scope.convs.indexOf(conversationId));
+				});
+
 				$rootScope.$on('joinedConversation', function(eventName, conversationId){
 					for( index = 0; index < $scope.convs.length; ++index){
 						if($scope.convs[index].id === conversationId){

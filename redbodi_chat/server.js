@@ -77,9 +77,9 @@ io.on('connection', function(client){
 				io.in(id).emit('update', name + ' has joined the conversation');
 				client.emit('sendConversationId', {id:id});
 				client.emit('joinedConversation', conversation);
-
 				//remove conversation from queue
 				queuedConversations.splice(queuedConversations.indexOf(conversation), 1);
+				client.broadcast.emit('conversationAnswered', conversation);
 
 			}else {
 				client.emit('warning', 'Conversation by... '); //TODO: inform user of the name of pharmacist who has handled the chat
