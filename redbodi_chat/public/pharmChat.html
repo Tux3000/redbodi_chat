@@ -94,7 +94,7 @@
 					    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{ alert.msg }}</alert>
 					    		<div class="panel-footer">
 					    			<div class="input-group">
-								  		<input ng-model='msgToSend' class='form-control' placeholder="Enter message"/>
+								  		<input ng-model='msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
 								  		<span class="input-group-btn">
 								  			<button ng-click='sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
 								  		</span>

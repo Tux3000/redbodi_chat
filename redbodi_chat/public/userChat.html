@@ -12,6 +12,7 @@
                 <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='showSignup'>
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-comment"></span> Chat
+                        <span>powered by <a href="http://www.redbodi.co.uk"><img src="images/redbodi_logo.png" width="100" height="20" /></a></span>
                         <div class="btn-group pull-right" dropdown>
 
                             <button type="button" class="btn btn-default btn-xs" dropdown-toggle>
@@ -92,7 +93,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button class="btn btn-primary" ng-click="agree()">Agree</button>
-                                            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                                            <button class="btn btn-danger" ng-click="cancel()">Disagree</button>
                                         </div>
                                     </script>
                                     I agree to the <a ng-click="openTerms()">Terms and Conditions</a> <input type="checkbox" ng-model="hasAgreed" />
@@ -107,7 +108,7 @@
                     </div>
                     <div class="panel-footer">
                         <div class="input-group">
-                            <input ng-model='firstMessage' class='form-control input-sm' placeholder="Type your message here..."/>
+                            <input ng-model='firstMessage' class='form-control input-sm' placeholder="Ask us a question..."/>
                             <span class="input-group-btn">
                                 <button ng-click='startChat()' class='btn btn-warning btn-sm' id="btn-signup">Send</button>
                             </span>
