@@ -126,10 +126,13 @@
     <script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
     <script src="components/angular-socket-io/socket.js"></script>
     <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="js/App.js"></script>
+    <script src="js/Factories.js"></script>
+    <script src="js/SignUpController.js"></script>
 
     <script>
        //var ioSocket =io();
-       var app = angular.module('app', ['ui.bootstrap', 'btford.socket-io']).
+       /*var app = angular.module('app', ['ui.bootstrap', 'btford.socket-io']).
         factory('ioSocket', function(socketFactory){
             return socketFactory();
         }).
@@ -151,9 +154,10 @@
                     $scope.firstMessage = null;
                 }
             }
-        }).
+        }).*/
+        angular.module('app').
         controller('LocCtrl', function($scope, $rootScope, ioSocket){
-
+            alert('loc controller')
             $scope.getPosition = function(position){
                 $scope.lat = position.coords.latitude;
                 $scope.lon = position.coords.longitude;
