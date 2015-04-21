@@ -4,24 +4,26 @@
 		.module('app')
 		.controller('TermsCtrl', TermsController);
 
-	function TermsController($scope, $modal){
-		$scope.hasAgreed = false;
+	function TermsController($modal){
+        var vm = this;
+        
+		vm.hasAgreed = false;
 
-        $scope.openTerms = function(){
+        vm.openTerms = function(){
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
                 controller: 'ModalInstanceCtrl',
                 resolve:{
                     items: function(){
-                        return $scope.hasAgreed
+                        return vm.hasAgreed
                     }
                 }
             });
 
             modalInstance.result.then(function(hasAgreed){
-                $scope.hasAgreed = hasAgreed;
+                vm.hasAgreed = hasAgreed;
             },function(){
-                $scope.hasAgreed = false;
+                vm.hasAgreed = false;
             });
         };
 	}

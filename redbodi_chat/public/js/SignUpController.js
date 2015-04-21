@@ -4,13 +4,14 @@
 		.module('app')
 		.controller('SignupCtrl', SignupController);
 
-	function SignupController($scope, $rootScope, userNameService, ioSocket) {
-		$scope.startChat = function(){
-		    if($scope.name && $scope.firstMessage){
-		        ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
-		        userNameService.username = $scope.name;
-		        $scope.name = null;
-		        $scope.firstMessage = null;
+	function SignupController($rootScope, userNameService, ioSocket) {
+		var vm = this;
+		vm.startChat = function(){
+		    if(vm.name && vm.firstMessage){
+		        ioSocket.emit('startChat', vm.name, vm.firstMessage);
+		        userNameService.username = vm.name;
+		        vm.name = null;
+		        vm.firstMessage = null;
 		    }
 	    }
 	}

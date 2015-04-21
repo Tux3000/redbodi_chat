@@ -5,14 +5,16 @@
 		.controller('ModalInstanceCtrl', ModalController);
 
 	function ModalController(){
-		$scope.agreed = false;
+		var vm = this;
+		
+		vm.agreed = false;
 
-        $scope.agree = function($scope, $modalInstance){
-            $scope.agreed = true;
-            $modalInstance.close($scope.agreed);
+        vm.agree = function($modalInstance){
+            vm.agreed = true;
+            $modalInstance.close(vm.agreed);
         };
 
-        $scope.cancel = function(){
+        vm.cancel = function(){
             $modalInstance.dismiss('cancel');
         };
 	}

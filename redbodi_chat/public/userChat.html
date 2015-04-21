@@ -9,7 +9,7 @@
         <div class="row" style="padding-top:40px;">
             <div ng-controller ='ViewCtrl as view' class="col-md-5">
 
-                <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='view.showSignup'>
+                <div ng-controller='MsgCtrl as messageView' class='panel panel-primary' ng-hide='view.showSignup'>
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-comment"></span> Chat
                         <span>powered by <a href="http://www.redbodi.co.uk"><img src="images/redbodi_logo.png" width="100" height="20" /></a></span>
@@ -35,7 +35,7 @@
                     </div>
                     <div class="panel-body">
                         <ul class="chat">
-                            <li ng-repeat='msg in msgs' class="{{msg.msgOptions.pullSide}} clearfix"><span class="chat-img pull-{{msg.msgOptions.pullSide}}">
+                            <li ng-repeat='msg in messageView.msgs' class="{{msg.msgOptions.pullSide}} clearfix"><span class="chat-img pull-{{msg.msgOptions.pullSide}}">
                                     <img src="http://placehold.it/50/{{msg.msgOptions.avatarColour}}/fff&text={{msg.msgOptions.avatar}}" alt="User Avatar" class="img-circle" />
 
                                 </span>
@@ -61,29 +61,29 @@
                             </li>
                         </ul>
                     </div>
-                    <!--<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>-->
+                    <!--<alert ng-repeat="alert in messageView.alerts" type="success" close="closeAlert($index)">{{alert.msg}}</alert>-->
                     <div class="panel-footer">
                         <div class="input-group">
                             <input ng-model='msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
                             <span class="input-group-btn">
-                                <button ng-click='sendMessage()' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
+                                <button ng-click='messageView.sendMessage()' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
                             </span>
                         </div>
                     </div>
 
 
                 </div>
-                <div ng-controller='SignupCtrl' class='panel panel-primary' ng-show='view.showSignup'>
+                <div ng-controller='SignupCtrl as signup' class='panel panel-primary' ng-show='view.showSignup'>
                     <div class="panel-heading">
                         <span>Start Chat</span>
                     </div>
                     <div class="panel-body">
                         <div class="input-group">
-                            <input ng-model='name' class='form-control input-sm' placeholder="What is your name?" tooltip="Tell us your name, so we know who you are."  tooltip-trigger="mouseenter" tooltip-placement="bottom"/>
-                            <input ng-model='email' class='form-control input-sm' placeholder="What is your email address?" tooltip="We promise not to spam you with emails."  tooltip-trigger="mouseenter" tooltip-placement="bottom"/>
-                            <input ng-model='dob' class='form-control input-sm' placeholder="When were you born?"/>
+                            <input ng-model='signup.name' class='form-control input-sm' placeholder="What is your name?" tooltip="Tell us your name, so we know who you are."  tooltip-trigger="mouseenter" tooltip-placement="bottom"/>
+                            <input ng-model='signup.email' class='form-control input-sm' placeholder="What is your email address?" tooltip="We promise not to spam you with emails."  tooltip-trigger="mouseenter" tooltip-placement="bottom"/>
+                            <input ng-model='signup.dob' class='form-control input-sm' placeholder="When were you born?"/>
                             <span>
-                                <div ng-controller="TermsCtrl">
+                                <div ng-controller="TermsCtrl as terms">
                                     <script type="text/ng-template" id="myModalContent.html">
                                         <div class="modal-header">
                                             <h3 class="modal-title">Terms and Conditions</h3>
@@ -96,21 +96,18 @@
                                             <button class="btn btn-danger" ng-click="cancel()">Disagree</button>
                                         </div>
                                     </script>
-                                    I agree to the <a ng-click="openTerms()">Terms and Conditions</a> <input type="checkbox" ng-model="hasAgreed" />
+                                    I agree to the <a ng-click="terms.openTerms()">Terms and Conditions</a> <input type="checkbox" ng-model="terms.hasAgreed" />
                                     <a href="" ng-click="test()"></a>
                                 </div>
-
-
-
                             </span>
 
                         </div>
                     </div>
                     <div class="panel-footer">
                         <div class="input-group">
-                            <input ng-model='firstMessage' class='form-control input-sm' placeholder="Ask us a question..."/>
+                            <input ng-model='signup.firstMessage' class='form-control input-sm' placeholder="Ask us a question..."/>
                             <span class="input-group-btn">
-                                <button ng-click='startChat()' class='btn btn-warning btn-sm' id="btn-signup">Send</button>
+                                <button ng-click='signup.startChat()' class='btn btn-warning btn-sm' id="btn-signup">Send</button>
                             </span>
                         </div>
                     </div>
@@ -129,9 +126,9 @@
     <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="js/app.js"></script>
     <script src="js/factories.js"></script>
+    <script src="js/signupChatToggle.js"></script>
     <script src="js/signUpController.js"></script>
     <script src="js/messageController.js"></script>
-    <script src="js/signupChatToggle.js"></script>
     <script src="js/locationController.js"></script>
     <script src="js/modalInstanceController.js"></script>
     <script src="js/termsController.js"></script>

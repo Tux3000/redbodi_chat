@@ -4,14 +4,10 @@
 		.module('app')
 		.controller('LocCtrl', LocationController);
 
-		function LocationController($scope, $rootScope, ioSocket){
-            $scope.getPosition = function(position){
-                $scope.lat = position.coords.latitude;
-                $scope.lon = position.coords.longitude;
-                $scope.sendLocationToServer(position.coords.latitude, position.coords.longitude, 'Success');
-            }
-
-            $scope.determineError = function(error){
+		function LocationController($rootScope, ioSocket){
+            var vm = this;
+            
+            vm.determineError = function(error){
                 var errorMsg = 'Unable to determine user location';
                 switch (error.code) {
                     case error.PERMISSION_DENIED:
@@ -27,23 +23,29 @@
                         errorMsg = "An unknown error occurred."
                         break;
                 }
-                $scope.sendLocationToServer(null, null, errorMsg);
+                vm.sendLocationToServer(null, null, errorMsg);
             }
 
-            $scope.getLocation = function(){
+            vm.getLocation = function(){
                 if(navigator.geolocation){
-                    navigator.geolocation.getCurrentPosition($scope.getPosition, $scope.determineError);
+                    navigator.geolocation.getCurrentPosition(vm.getPosition, vm.determineError);
                 }else{
-                    $scope.sendLocationToServer(null, null, "User's browser does not support geolocation");
+                    vm.sendLocationToServer(null, null, "User's browser does not support geolocation");
                 }
             }
 
-            $scope.sendLocationToServer = function(lat, lon, message){
+            vm.getPosition = function(position){
+                vm.lat = position.coords.latitude;
+                vm.lon = position.coords.longitude;
+                vm.sendLocationToServer(position.coords.latitude, position.coords.longitude, 'Success');
+            }
+
+            vm.sendLocationToServer = function(lat, lon, message){
                 ioSocket.emit('userLocation', lat, lon, message);
             }
 
             $rootScope.$on('startChat', function(eventName){
-                $scope.getLocation();
+                vm.getLocation();
             });
-		}
+        }
 })();
