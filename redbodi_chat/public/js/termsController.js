@@ -6,13 +6,13 @@
 
 	function TermsController($modal){
         var vm = this;
-        
+
 		vm.hasAgreed = false;
 
         vm.openTerms = function(){
             var modalInstance = $modal.open({
                 templateUrl: 'myModalContent.html',
-                controller: 'ModalInstanceCtrl',
+                controller: 'ModalInstanceCtrl as modal',
                 resolve:{
                     items: function(){
                         return vm.hasAgreed

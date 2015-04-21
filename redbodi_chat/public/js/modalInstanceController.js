@@ -4,12 +4,12 @@
 		.module('app')
 		.controller('ModalInstanceCtrl', ModalController);
 
-	function ModalController(){
+	function ModalController($modalInstance){
 		var vm = this;
-		
+
 		vm.agreed = false;
 
-        vm.agree = function($modalInstance){
+        vm.agree = function(){
             vm.agreed = true;
             $modalInstance.close(vm.agreed);
         };
