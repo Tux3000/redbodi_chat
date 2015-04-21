@@ -2,12 +2,13 @@
 	'use strict';
 	angular
 		.module('app')
-		.controller('ChatSignupCtrl', ChatSignupController);
+		.controller('ViewCtrl', ViewController);
 
-	function ChatSignupController($scope, $rootScope, userNameService) {
-		$scope.showSignup = true;
+	function ViewController($rootScope, userNameService) {
+		var vm = this;
+		vm.showSignup = true;
 	    $rootScope.$on('startChat', function(eventName){
-	        $scope.showSignup = false;
+	        vm.showSignup = false;
 	    });
 	}
 })();

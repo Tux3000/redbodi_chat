@@ -7,9 +7,9 @@
   <body ng-app='app'>
     <div class="container">
         <div class="row" style="padding-top:40px;">
-            <div ng-controller ='ChatSignupCtrl' class="col-md-5">
+            <div ng-controller ='ViewCtrl as view' class="col-md-5">
 
-                <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='showSignup'>
+                <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='view.showSignup'>
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-comment"></span> Chat
                         <span>powered by <a href="http://www.redbodi.co.uk"><img src="images/redbodi_logo.png" width="100" height="20" /></a></span>
@@ -73,7 +73,7 @@
 
 
                 </div>
-                <div ng-controller='SignupCtrl' class='panel panel-primary' ng-show='showSignup'>
+                <div ng-controller='SignupCtrl' class='panel panel-primary' ng-show='view.showSignup'>
                     <div class="panel-heading">
                         <span>Start Chat</span>
                     </div>
@@ -118,7 +118,7 @@
             </div>
         </div>
     </div>
-    
+
     <div ng-controller='LocCtrl'>
     </div>
 
