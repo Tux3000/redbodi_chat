@@ -7,8 +7,8 @@
   <body ng-app='app'>
     <div class="container">
         <div class="row" style="padding-top:40px;">
-            <div ng-controller ='ChatSignupCtrl'class="col-md-5">
-                
+            <div ng-controller ='ChatSignupCtrl' class="col-md-5">
+
                 <div ng-controller='MsgCtrl' class='panel panel-primary' ng-hide='showSignup'>
                     <div class="panel-heading">
                         <span class="glyphicon glyphicon-comment"></span> Chat
@@ -118,6 +118,7 @@
             </div>
         </div>
     </div>
+    
     <div ng-controller='LocCtrl'>
     </div>
 
@@ -126,181 +127,17 @@
     <script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
     <script src="components/angular-socket-io/socket.js"></script>
     <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="js/App.js"></script>
-    <script src="js/Factories.js"></script>
-    <script src="js/SignUpController.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/factories.js"></script>
+    <script src="js/signUpController.js"></script>
+    <script src="js/messageController.js"></script>
+    <script src="js/signupChatToggle.js"></script>
+    <script src="js/locationController.js"></script>
+    <script src="js/modalInstanceController.js"></script>
+    <script src="js/termsController.js"></script>
 
-    <script>
-       //var ioSocket =io();
-       /*var app = angular.module('app', ['ui.bootstrap', 'btford.socket-io']).
-        factory('ioSocket', function(socketFactory){
-            return socketFactory();
-        }).
-        factory('userNameService', function(){
-            return {username: null};
-        }).
-        controller('ChatSignupCtrl', function($scope, $rootScope){
-            $scope.showSignup = true;
-            $rootScope.$on('startChat', function(eventName){
-                $scope.showSignup = false;
-            });
-        }).
-        controller('SignupCtrl', function($scope, $rootScope, ioSocket, userNameService){
-            $scope.startChat = function(){
-                if($scope.name && $scope.firstMessage){
-                    ioSocket.emit('startChat', $scope.name, $scope.firstMessage);
-                    userNameService.username = $scope.name;
-                    $scope.name = null;
-                    $scope.firstMessage = null;
-                }
-            }
-        }).*/
-        angular.module('app').
-        controller('LocCtrl', function($scope, $rootScope, ioSocket){
-            alert('loc controller')
-            $scope.getPosition = function(position){
-                $scope.lat = position.coords.latitude;
-                $scope.lon = position.coords.longitude;
-                $scope.sendLocationToServer(position.coords.latitude, position.coords.longitude, 'Success');
-            }
+  </body>
+</html>
 
-            $scope.determineError = function(error){
-                var errorMsg = 'Unable to determine user location';
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMsg = "User denied the request for Geolocation."
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable."
-                        break;
-                    case error.TIMEOUT:
-                        errorMsg = "The request to get user location timed out."
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        errorMsg = "An unknown error occurred."
-                        break;
-                }
-                $scope.sendLocationToServer(null, null, errorMsg);
-            }
-
-            $scope.getLocation = function(){
-                if(navigator.geolocation){
-                    navigator.geolocation.getCurrentPosition($scope.getPosition, $scope.determineError);
-                }else{
-                    $scope.sendLocationToServer(null, null, "User's browser does not support geolocation");
-                }
-            }
-
-            $scope.sendLocationToServer = function(lat, lon, message){
-                ioSocket.emit('userLocation', lat, lon, message);
-            }
-
-            $rootScope.$on('startChat', function(eventName){
-                $scope.getLocation();
-            });
-
-        })
-        .controller('MsgCtrl', function($scope, $rootScope, ioSocket, userNameService){
-            $scope.msgs = [];
-            $scope.alerts = [];
-            $scope.conversationId = null;
-
-            $rootScope.$on('firstMessage', function(eventName, conversation){
-                for(var i = 0; i < conversation.messages.length; i++){
-                    var chat = conversation.messages[i];
-                    appendMessage(chat.sender, chat.msg);
-                }
-            });
-
-            $scope.sendMessage = function(){
-                if($scope.msgToSend){
-                    ioSocket.emit('chatMessage', $scope.conversationId, $scope.msgToSend);
-                    appendMessage(userNameService.username, $scope.msgToSend);
-                    $scope.msgToSend = null;
-                }
-            }
-
-            $scope.closeAlert = function(index){
-                $scope.alerts.splice(index, 1);
-            };
-
-            ioSocket.on('chatMessage', function(sender, message){
-                appendMessage(sender.name, message);
-            });
-
-            ioSocket.on('update', function(status){
-                $scope.alerts.push({type: 'success', msg: status});
-            });
-
-            ioSocket.on('chatStarted', function(hasStrarted, conversation){
-                if(hasStrarted){
-                    $scope.alerts.push({type: 'success', msg: 'Conversation created'});
-                    $rootScope.$broadcast('startChat');
-                    $rootScope.$broadcast('firstMessage',  conversation);
-                    $scope.conversationId = conversation.id;
-                }
-            });
-
-            function appendMessage(sender, message){
-                var msgOptions = {
-                    pullSide: 'left',
-                    oppositeSide: 'right',
-                    avatar: 'P',
-                    avatarColour: 'FA6F57'
-                }; 
-
-                if(userNameService.username === sender){
-                    msgOptions.pullSide = 'right';
-                    msgOptions.oppositeSide = 'left';
-                    msgOptions.avatar = 'U';
-                    msgOptions.avatarColour = '55C1E7';
-                }
-
-                $scope.msgs.push({
-                    sender: sender,
-                    msg: message,
-                    msgOptions: msgOptions
-                });
-            }
-        }).controller('TermsCtrl', function($scope, $modal){
-            $scope.hasAgreed = false;
-
-            $scope.openTerms = function(){
-                var modalInstance = $modal.open({
-                    templateUrl: 'myModalContent.html',
-                    controller: 'ModalInstanceCtrl',
-                    resolve:{
-                        items: function(){
-                            return $scope.hasAgreed
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function(hasAgreed){
-                    $scope.hasAgreed = hasAgreed;
-                },function(){
-                    $scope.hasAgreed = false;
-                });
-            };
-        }).controller('ModalInstanceCtrl', function($scope, $modalInstance){
-            $scope.agreed = false;
-
-            $scope.agree = function(){
-                $scope.agreed = true;
-                $modalInstance.close($scope.agreed);
-            };
-
-            $scope.cancel = function(){
-                $modalInstance.dismiss('cancel');
-            };
-
-        });
-
-
-
-
-
-
-    </script>
   </body>
 </html>

@@ -1,14 +1,17 @@
 //put the factories in a single file rather than split them
 //if the factories start to contain more logic, then split them
-angular
-	.module('app')
-	.factory('ioSocketFactory', ioSocketFactory)
-	.factory('userNameServiceFactory', userNameServiceFactory);
+(function(){
+	angular
+		.module('app')
+		.factory('ioSocket', IoSocketFactory)
+		.factory('userNameService', UserNameServiceFactory);
 
-function ioSocketFactory() {
-	return socketFactory();
-}
+	function IoSocketFactory(socketFactory) {
+		var socket = socketFactory();
+		return socket;
+	}
 
-function userNameServiceFactory() {
-	return { username: null };
-}
+	function UserNameServiceFactory() {
+		return { username: null };
+	}
+})();
