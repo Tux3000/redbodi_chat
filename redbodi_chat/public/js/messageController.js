@@ -1,3 +1,4 @@
+//TODO: merge common functionality with pharmMessageController.js
 (function(){
     'use strict';
     angular
