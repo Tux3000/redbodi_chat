@@ -4,25 +4,21 @@
 		.module('app')
 		.controller('LocCtrl', LocationController);
 
-	function LocationController($scope, $rootScope, ioSocket, MarkerCreatorService) {
-		$scope.latitude = 0;
-		$scope.longitude = 0;
-		$scope.statusMsg = 'N/A';
+	function LocationController($rootScope, ioSocket, MarkerCreatorService) {
+		var vm = this;
+		vm.latitude = 0;
+		vm.longitude = 0;
+		vm.statusMsg = 'N/A';
 
-		$scope.grabLocation = function(conversationId){
+		vm.grabLocation = function(conversationId){
 			ioSocket.emit('getUserLocation', conversationId);					
 		}
 
 		ioSocket.on('userLocation', function(latitude, longitude, statusMsg){
-			$scope.latitude = latitude;
-			$scope.longitude = longitude;
-			$scope.statusMsg = statusMsg;
-
-			MarkerCreatorService.createByCoords(latitude, longitude, "User is here", function(marker){
-				$scope.userMarker = marker;
-			});
-
-			$scope.map = { 
+			vm.latitude = latitude;
+			vm.longitude = longitude;
+			vm.statusMsg = statusMsg;
+			vm.map = { 
 				center:{ 
 					latitude: latitude, 
 					longitude: longitude 
@@ -30,7 +26,12 @@
 				zoom: 12,
 				markers: []
 			};
-			$scope.map.markers.push($scope.userMarker);
+
+			MarkerCreatorService.createByCoords(latitude, longitude, "User is here", function(marker){
+				vm.userMarker = marker;
+			});
+
+			vm.map.markers.push(vm.userMarker);
 		});
 	}
 })();

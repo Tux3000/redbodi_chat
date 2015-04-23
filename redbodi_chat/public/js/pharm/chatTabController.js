@@ -4,14 +4,18 @@
 		.module('app')
 		.controller('ChatTabCtrl', ChatTabController);
 
-	function ChatTabController($scope, $rootScope, conversationService, ioSocket) {
-		$scope.chats = {};
+	function ChatTabController($rootScope, conversationService, ioSocket) {
+		var vm = this;
+		vm.chats = {};
 
-		$scope.appendMessage = function(conversationId, sender, message){
-			
+		$rootScope.$on('appendMessage', function(eventName, conversationId, sender, message){
+			vm.appendMessage(conversationId, sender, message);
+		});
 
-			if(!$scope.chats[conversationId].chatSelected){
-				$scope.chats[conversationId].unreadMessages+=1;
+		vm.appendMessage = function(conversationId, sender, message){
+
+			if(!vm.chats[conversationId].chatSelected){
+				vm.chats[conversationId].unreadMessages+=1;
 			}
 
 			var msgOptions={
@@ -28,33 +32,32 @@
                 msgOptions.avatarColour = 'FA6F57';
 			}
 
-			$scope.chats[conversationId].messages.push({
+			vm.chats[conversationId].messages.push({
 				msg: message, 
 				sender: sender,
 				msgOptions: msgOptions
 			});
 		}
 				
-		$scope.conversationSelected = function(conversationId){
-			$scope.chats[conversationId].unreadMessages = 0;
-			$scope.chats[conversationId].chatSelected = true;
+		vm.conversationSelected = function(conversationId){
+			vm.chats[conversationId].unreadMessages = 0;
+			vm.chats[conversationId].chatSelected = true;
 		}
 
-		$scope.conversationDeselected = function(conversationId){
-			$scope.chats[conversationId].chatSelected = false;
+		vm.conversationDeselected = function(conversationId){
+			vm.chats[conversationId].chatSelected = false;
 		}
 				
 		ioSocket.on('chatMessage', function(conversation, message){
-			
-			$scope.appendMessage(conversation.conversation, conversation.name, message);
+			vm.appendMessage(conversation.conversation, conversation.name, message);
 		});
 
 		ioSocket.on('joinedConversation', function(conversation){
-			$scope.chats[conversation.id] = { chatSelected: ($scope.chats.length > 1 ? true : false), unreadMessages: 0, messages: [] };
+			vm.chats[conversation.id] = { chatSelected: (vm.chats.length > 1 ? true : false), unreadMessages: 0, messages: [] };
 
 			for(var i = 0; i < conversation.messages.length; i++){
             	var chat = conversation.messages[i];
-            	$scope.appendMessage(conversation.id, chat.sender, chat.msg);
+            	vm.appendMessage(conversation.id, chat.sender, chat.msg);
         	}
 
 			$rootScope.$broadcast('joinedConversation', conversation.id);

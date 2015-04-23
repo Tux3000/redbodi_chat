@@ -11,16 +11,16 @@
 					<div class="panel panel-primary">
 						<div class="panel-heading">Queued Conversations</div>
 
-						<div ng-controller="ConvsCtrl" class="panel-body">
+						<div ng-controller="ConvsCtrl as convController" class="panel-body">
 							<ul class='media-list'>
-								<li ng-repeat='conv in convs' class='media'>
+								<li ng-repeat='conv in convController.convs' class='media'>
 									<div class="media-body">
 										<div class="media">
 											<span class="pull-left">Avatar</span>
 											<div class="media-body">
 												<h5>{{ conv.name }} | {{ conv.firstMessage }}</h5>
-												<small class="text-muted">date at time</small>
-												<button ng-click='joinConversation(conv.id)' class='btn btn-default'>Join</button>
+												<small class="text-muted">{{ conv.dateTime }}</small>
+												<button ng-click='convController.joinConversation(conv.id)' class='btn btn-default'>Join</button>
 											</div>
 										</div>
 									</div>
@@ -31,15 +31,14 @@
 					</div>
 				</div>
 				
-			  	<div ng-controller="ChatTabCtrl" class="col-md-5">
+			  	<div ng-controller="ChatTabCtrl as tabController" class="col-md-5">
 			  		<tabset justified="true">
-					    <tab ng-repeat="(key, value) in chats" select="conversationSelected(key)" deselect="conversationDeselected(key)">
+					    <tab ng-repeat="(key, value) in tabController.chats" select="tabController.conversationSelected(key)" deselect="tabController.conversationDeselected(key)">
 					    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
 
-					    	<div ng-controller="MsgCtrl" class="panel panel-primary">
+					    	<div ng-controller="MsgCtrl as messageController" class="panel panel-primary">
 					    		<div class="panel-heading">
 					    			<span class="glyphicon glyphicon-comment"></span> Chat
-					    			<!--<div ng-controller="DropdownCtrl">-->
 				                        <div class="btn-group pull-right" dropdown>
 				                            <button type="button" class="btn btn-default btn-xs" dropdown-toggle>
 				                                <span class="glyphicon glyphicon-chevron-down"></span>
@@ -94,9 +93,9 @@
 					    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{ alert.msg }}</alert>
 					    		<div class="panel-footer">
 					    			<div class="input-group">
-								  		<input ng-model='msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
+								  		<input ng-model='messageController.msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
 								  		<span class="input-group-btn">
-								  			<button ng-click='sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
+								  			<button ng-click='messageController.sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
 								  		</span>
 							  		</div>
 						  		</div>
@@ -104,17 +103,17 @@
 
 						  	<h3>User Location</h3>
 						  	<hr />
-						  	<div class="angular-google-map-container" ng-controller='LocCtrl'>
+						  	<div class="angular-google-map-container" ng-controller='LocCtrl as locationController'>
 
-						  		<label>Location Status: </label><span>{{ statusMsg }}</span>
-						  		<label>Latitude: </label><span>{{ latitude }}</span>
-						  		<label>Longitude: </label><span>{{ longitude }}</span>
-						  		<button ng-click='grabLocation(key)'>Grab User Location</button>
+						  		<label>Location Status: </label><span>{{ locationController.statusMsg }}</span>
+						  		<label>Latitude: </label><span>{{ locationController.latitude }}</span>
+						  		<label>Longitude: </label><span>{{ locationController.longitude }}</span>
+						  		<button ng-click='locationController.grabLocation(key)'>Grab User Location</button>
 
-						  		<ui-gmap-google-map center='map.center' zoom='map.zoom'>
+						  		<ui-gmap-google-map center='locationController.map.center' zoom='locationController.map.zoom'>
 							  		
 
-						  			<ui-gmap-markers models="map.markers" idkey="'id'" coords="'coords'" icon="'icon'" options="'options'" isLabel='true' click="'onClick'" events="'events'">
+						  			<ui-gmap-markers models="locationController.map.markers" idkey="'id'" coords="'coords'" icon="'icon'" options="'options'" isLabel='true' click="'onClick'" events="'events'">
 
 						  				<ui-gmap-windows coords="'self'" options="windowOptions" closeClick="closeClick()">
 		           							<div ng-non-bindable>{{title}}</div>

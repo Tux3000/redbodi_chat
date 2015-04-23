@@ -5,12 +5,13 @@
 		.module('app')
 		.controller('MsgCtrl', MessageController);
 
-	function MessageController($scope, $rootScope, conversationService, ioSocket){
-		$scope.sendMessage = function(convId){
-			if($scope.msgToSend){
-				ioSocket.emit('chatMessage', convId, $scope.msgToSend);
-				$scope.appendMessage(convId, "Pharmacist", $scope.msgToSend);
-				$scope.msgToSend = null;
+	function MessageController($rootScope, ioSocket){
+		var vm = this;
+		vm.sendMessage = function(convId){
+			if(vm.msgToSend){
+				ioSocket.emit('chatMessage', convId, vm.msgToSend);
+				$rootScope.$emit('appendMessage',convId, "Pharmacist", vm.msgToSend);
+				vm.msgToSend = null;
 			}
 		}
 	}
