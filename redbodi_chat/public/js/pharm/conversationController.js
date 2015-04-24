@@ -13,12 +13,12 @@
 		}
 
 		function addConversation (conversation){
-			
+
 			vm.convs.push({
 				name: conversation.name,
 				firstMessage: conversation.messages[0].msg,
 				id: conversation.id,
-				dateTime: Date.now()
+				dateTime: new Date()
 			});
 			conversationService.conversations[conversation.id] = conversation;
 		}

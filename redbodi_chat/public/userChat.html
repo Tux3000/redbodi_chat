@@ -44,13 +44,13 @@
                                     <div ng-if="msg.msgOptions.pullSide==='left'">
                                         <div class="header">
                                             <strong class=" primary-font"> {{ msg.sender }} </strong><small class="pull-right text-muted">
-                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><!--TODO: time to come from model-->
+                                            <span class="glyphicon glyphicon-time"></span> {{ msg.minutesAgo }} mins ago</small><!--TODO: time to come from model-->
                                         </div>
                                     </div>  
                                     <div ng-if="msg.msgOptions.pullSide==='right'">
                                         <div class="header">
                                             <small class=" text-muted">
-                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><strong class="pull-right primary-font"> {{ msg.sender }} </strong><!--TODO: time to come from model-->
+                                            <span class="glyphicon glyphicon-time"></span> {{ msg.minutesAgo }} mins ago</small><strong class="pull-right primary-font"> {{ msg.sender }} </strong><!--TODO: time to come from model-->
                                         </div>
                                     </div>  
                                     <p>
@@ -67,6 +67,8 @@
                             <input ng-model='messageView.msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
                             <span class="input-group-btn">
                                 <button ng-click='messageView.sendMessage()' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
+                                <button ng-click='messageView.sendMessage()' class='btn btn-warning btn-sm' id="btn-chat"><span class="glyphicon glyphicon-picture"></span></button>
+                                <button ng-click='messageView.sendMessage()' class='btn btn-warning btn-sm' id="btn-chat"><span class="glyphicon glyphicon-facetime-video"></span></button>
                             </span>
                         </div>
                     </div>
@@ -123,8 +125,10 @@
     <script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
     <script src="components/angular-socket-io/socket.js"></script>
     <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="components/moment/moment.js"></script>
     <script src="js/user/app.js"></script>
     <script src="js/ioSocketFactory.js"></script>
+    <script src="js/momentFactory.js"></script>
     <script src="js/user/usernameServiceFactory.js"></script>
     <script src="js/user/signupChatToggle.js"></script>
     <script src="js/user/signUpController.js"></script>
@@ -132,7 +136,5 @@
     <script src="js/user/locationController.js"></script>
     <script src="js/user/modalInstanceController.js"></script>
     <script src="js/user/termsController.js"></script>
-
-
   </body>
 </html>

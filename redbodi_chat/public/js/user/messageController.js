@@ -6,7 +6,7 @@
         .controller('MsgCtrl', MessageController);
 
     
-    function MessageController($rootScope, ioSocket, userNameService){
+    function MessageController($rootScope, ioSocket, userNameService, momentService){
         var vm = this;
         vm.msgs = [];
         vm.alerts = [];
@@ -30,6 +30,8 @@
             vm.msgs.push({
                 sender: sender,
                 msg: message,
+                time: momentService.format(),
+                minutesAgo: 0,
                 msgOptions: msgOptions
             });
         }
