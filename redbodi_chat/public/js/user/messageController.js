@@ -6,33 +6,20 @@
         .controller('MsgCtrl', MessageController);
 
     
-    function MessageController($rootScope, ioSocket, userNameService, momentService){
+    function MessageController($rootScope, ioSocket, userNameService, momentService, msgOptionsService){
         var vm = this;
         vm.msgs = [];
         vm.alerts = [];
         vm.conversationId = null;
 
+
         function appendMessage(sender, message){
-            var msgOptions = {
-                pullSide: 'left',
-                oppositeSide: 'right',
-                avatar: 'P',
-                avatarColour: 'FA6F57'
-            }; 
-
-            if(userNameService.username === sender){
-                msgOptions.pullSide = 'right';
-                msgOptions.oppositeSide = 'left';
-                msgOptions.avatar = 'U';
-                msgOptions.avatarColour = '55C1E7';
-            }
-
             vm.msgs.push({
                 sender: sender,
                 msg: message,
                 time: momentService.format(),
                 minutesAgo: 0,
-                msgOptions: msgOptions
+                msgOptions: msgOptionsService.getOptions(userNameService.username === sender, sender.charAt(0))
             });
         }
 

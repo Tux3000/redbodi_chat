@@ -4,7 +4,7 @@
 		.module('app')
 		.controller('ChatTabCtrl', ChatTabController);
 
-	function ChatTabController($rootScope, conversationService, ioSocket) {
+	function ChatTabController($rootScope, conversationService, ioSocket, msgOptionsService) {
 		var vm = this;
 		vm.chats = {};
 
@@ -18,24 +18,10 @@
 				vm.chats[conversationId].unreadMessages+=1;
 			}
 
-			var msgOptions={
-				pullSide: 'left',
-				oppositeSide: 'right',
-				avatar: 'U',
-				avatarColour: '55C1E7'
-			};
-
-			if(sender === 'Pharmacist'){
-				msgOptions.pullSide = 'right';
-                msgOptions.oppositeSide = 'left';
-                msgOptions.avatar = 'P';
-                msgOptions.avatarColour = 'FA6F57';
-			}
-
 			vm.chats[conversationId].messages.push({
 				msg: message, 
 				sender: sender,
-				msgOptions: msgOptions
+				msgOptions: msgOptionsService.getOptions(sender === 'Pharmacist', sender.charAt(0))
 			});
 		}
 				
