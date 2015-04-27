@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+	<head>
+		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+	</head>
+	<body ng-app='app'>
+		<div class='container'>
+			<div class="row" style="padding-top:40px">
+				<div ng-controller='SignupCtrl as signup' class="col-md-5">
+					<div class='panel-heading'>
+						<span>Register</span>
+					</div>
+
+					<div class='panel-body'>
+						<div class='input-group'>
+							<input ng-model='signup.name' class='form-control input-sm' placeholder='What is your name?' tooltip='Tell us your name, so patients know who you are.' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
+							<input ng-model='signup.email' class='form-control input-sm' placeholder='What is your email address?' tooltip='We need this to varify that you are a pharmacist' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
+							<select ng-model='signup.orgCode' class='form-control input-sm' ng-options='org for org in organizations' placeholder='Pick one...'>
+								<option></option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<script src="components/socket.io-client/socket.io.js"></script>
+		<script src="components/angularjs/angular.js"></script>
+		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+		<script src="components/angular-socket-io/socket.js"></script>
+		<script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+		<script src="components/lodash/dist/lodash.js"></script>
+
+		<script src="js/pharm/basicApp.js"></script>
+		<script src="js/pharm/signup.js"></script>
+
+	</body>
+</html>
+
+<!--
+	Sign up process:
+		Screen1: enter a few details, name, and organisation code, password, password confirm
+		Screen2: allow the pharmacist to fill in a bio, upload a picture etc
+-->
+
+
+
+

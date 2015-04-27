@@ -26,9 +26,9 @@ app.get('/pharm', function(req, res){
 	res.sendFile(__dirname + '/public/pharmChat.html');
 });
 
-app.get('/test', function(req, res){
-	res.sendFile(__dirname + '/simpleChatUIDemo.html')
-})
+app.get('/pharmRegister', function(req, res){
+	res.sendFile(__dirname + '/public/pharmRegistration.html');
+});
 
 io.on('connection', function(client){
 	console.log('user has connected: ' + client.id);
@@ -123,8 +123,8 @@ io.on('connection', function(client){
 
 });
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+http.listen(4000, function(){
+	console.log('listening on *:4000');
 });
 
 function addMessageToConversation(conversation, clientId, message){
