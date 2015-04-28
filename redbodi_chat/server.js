@@ -27,7 +27,7 @@ app.get('/pharm', function(req, res){
 });
 
 app.get('/pharmRegister', function(req, res){
-	res.sendFile(__dirname + '/public/pharmRegistration.html');
+	res.sendFile(__dirname + '/public/pharm.html');
 });
 
 io.on('connection', function(client){

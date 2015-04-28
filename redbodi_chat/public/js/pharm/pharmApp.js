@@ -4,7 +4,8 @@
 		.module('app', [
 			'ui.bootstrap', 
 			'btford.socket-io',
-			'uiGmapgoogle-maps'
+			'uiGmapgoogle-maps',
+			'ngRoute'
 			])
 		.config(function(uiGmapGoogleMapApiProvider){
     		uiGmapGoogleMapApiProvider.configure({
