@@ -41,6 +41,7 @@
 		</div>
 		
 	  	<div ng-controller="ChatTabCtrl as tabController" class="col-md-5">
+
 	  		<tabset justified="true">
 			    <tab ng-repeat="(key, value) in tabController.chats" select="tabController.conversationSelected(key)" deselect="tabController.conversationDeselected(key)">
 			    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
@@ -139,5 +140,3 @@
 	  	</div>
 	</div>
 </div>
-
-

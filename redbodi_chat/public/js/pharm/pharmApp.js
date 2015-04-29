@@ -16,8 +16,7 @@
 
 		            // route for the home page
 		            .when('/', {
-		                templateUrl : 'templates/pharmChat.html',
-		                controller  : 'ConvsCtrl'
+		                templateUrl : 'templates/pharmChat.html'
 		            })
 
 		            // route for the about page
