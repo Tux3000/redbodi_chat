@@ -17,19 +17,19 @@
 		            // route for the home page
 		            .when('/', {
 		                templateUrl : 'templates/pharmChat.html',
-		                controller  : 'mainController'
+		                controller  : 'ConvsCtrl'
 		            })
 
 		            // route for the about page
 		            .when('/login', {
 		                templateUrl : 'templates/login.html',
-		                controller  : 'loginController'
+		                controller  : 'LoginCtrl'
 		            })
 
 		            // route for the contact page
 		            .when('/register', {
 		                templateUrl : 'templates/register.html',
-		                controller  : 'regController'
+		                controller  : 'RegistrationCtrl'
 		            });
 
     	});

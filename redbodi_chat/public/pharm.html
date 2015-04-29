@@ -2,29 +2,14 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/map.css">
 		<link rel="stylesheet" href="css/chat.css">
 	</head>
 	<body ng-app='app'>
-		<header>
-            <nav class="navbar navbar-default">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/"></a>
-                </div>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#/"><i class="fa fa-home"></i> Home</a></li>
-                    <li><a href="#login"><i class="fa fa-shield"></i> Login</a></li>
-                    <li><a href="#register"><i class="fa fa-comment"></i> Register</a></li>
-                </ul>
-            </div>
-            </nav>
-        </header>
         <div id="main">
         	<div ng-view></div>
         </div>
 		<!---->
-
 		<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=en"></script>
 		<script src="components/socket.io-client/socket.io.js"></script>
 		<script src="components/angularjs/angular.js"></script>
@@ -35,27 +20,18 @@
 		<script src="components/angular-google-maps/dist/angular-google-maps.js"></script>
 		<script src="components/angular-route/angular-route.js"></script>
 		<script src="js/pharm/pharmApp.js"></script>
+		<script src="js/ioSocketFactory.js"></script>
+		<script src="js/msgOptionsServiceFactory.js"></script>
+		<script src="js/pharm/markerCreatorServiceFactory.js"></script>
+		<script src="js/pharm/conversationServiceFactory.js"></script>
 		<script src="js/pharm/signup.js"></script>
-		<!--<scr1pt src="js/pharm/routes.js"></script>-->
-		<script >
-			var app = angular.module('app');
-		    // configure our routes
-
-
-		    // create the controller and inject Angular's $scope
-		    app.controller('mainController', function($scope) {
-		        // create a message to display in our view
-		        $scope.message = 'Everyone come and see how good I look!';
-		    });
-
-		    app.controller('regController', function($scope) {
-		        $scope.message = 'reg';
-		    });
-
-		    app.controller('loginController', function($scope) {
-		        $scope.message = 'login';
-		    });
-		</script>
+		<script src="js/pharm/chatTabController.js"></script>
+		<script src="js/pharm/conversationController.js"></script>
+		<script src="js/pharm/mapController.js"></script>
+		<script src="js/pharm/pharmMessageController.js"></script>
+		<script src="js/pharm/loginController.js"></script>
+		<script src="js/pharm/registrationController.js"></script>
+		
 	</body>
 </html>
 
