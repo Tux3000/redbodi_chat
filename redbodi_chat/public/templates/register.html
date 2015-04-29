@@ -1,0 +1,25 @@
+<div class='container'>
+	<div class="row" style="padding-top:40px">
+		<div ng-controller='SignupCtrl as signup' class="col-md-5">
+			<div class='panel panel-primary'>
+				<div class='panel-heading'>
+					<span>Register</span>
+				</div>
+
+				<div class='panel-body'>
+					<div class='input-group'>
+						<input ng-model='signup.name' class='form-control input-sm' placeholder='What is your name?' tooltip='Tell us your name, so patients know who you are.' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
+						<input ng-model='signup.email' class='form-control input-sm' placeholder='What is your email address?' tooltip='We need this to varify that you are a pharmacist' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
+						<select ng-model='signup.orgCode' class='form-control input-sm' ng-options='org for org in signup.organisations'>
+							<option></option>
+						</select>
+						<input class='form-control input-sm' ng-model='login.password' placeholder='Password'/>
+						<span><a href="#login">Already a user?</a></span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+

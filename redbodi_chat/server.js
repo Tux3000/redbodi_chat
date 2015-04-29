@@ -23,7 +23,7 @@ app.get('/', function(req, res){
 });
 
 app.get('/pharm', function(req, res){
-	res.sendFile(__dirname + '/public/pharmChat.html');
+	res.sendFile(__dirname + '/public/pharm.html');
 });
 
 app.get('/pharmRegister', function(req, res){
