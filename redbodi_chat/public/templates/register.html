@@ -13,7 +13,8 @@
 						<select ng-model='signup.orgCode' class='form-control input-sm' ng-options='org for org in signup.organisations'>
 							<option></option>
 						</select>
-						<input class='form-control input-sm' ng-model='login.password' placeholder='Password'/>
+						<input type='password' class='form-control input-sm' ng-model='login.password' placeholder='Please choose a password'/>
+						<input type='password' class='form-control input-sm' ng-model='login.passwordConfirm' placeholder='Please confirm your choosen password'/>
 						<span><a href="#login">Already a user?</a></span>
 					</div>
 				</div>
