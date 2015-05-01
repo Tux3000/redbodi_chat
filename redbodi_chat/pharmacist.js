@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/pharmacists');
-var pharmacist = mongoose.schema({
+var pharmacist = mongoose.Schema({
 	username: String,
 	password: {type: String, select: false}
 });

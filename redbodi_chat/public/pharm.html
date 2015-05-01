@@ -4,12 +4,14 @@
 		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/map.css">
 		<link rel="stylesheet" href="css/chat.css">
+		<link rel="stylesheet" href="css/registration.css">
 	</head>
 	<body ng-app='app'>
+
         <div id="main">
         	<div ng-view></div>
         </div>
-		<!---->
+
 		<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=en"></script>
 		<script src="components/socket.io-client/socket.io.js"></script>
 		<script src="components/angularjs/angular.js"></script>
@@ -31,15 +33,25 @@
 		<script src="js/pharm/pharmMessageController.js"></script>
 		<script src="js/pharm/loginController.js"></script>
 		<script src="js/pharm/registrationController.js"></script>
+
+		<script>
+			angular.module('app').directive('match', [function () {
+				return {
+					require: 'ngModel',
+					link: function (scope, elem, attrs, ctrl) {
+
+						scope.$watch('[' + attrs.ngModel + ', ' + attrs.match + ']', function(value){
+							ctrl.$setValidity('match', value[0] === value[1] );
+						}, true);
+
+					}
+				}
+			}]);
+
+		</script>
 		
 	</body>
 </html>
-
-<!--
-	Sign up process:
-		Screen1: enter a few details, name, and organisation code, password, password confirm
-		Screen2: allow the pharmacist to fill in a bio, upload a picture etc
--->
 
 
 

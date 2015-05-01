@@ -35,6 +35,12 @@ app.get('/pharmRegister', function(req, res){
 	res.sendFile(__dirname + '/public/pharm.html');
 });
 
+app.post('/pharmRegister', function(req, res) {
+	console.log('registering');
+	//TODO: add registration
+});
+
+
 app.post('/session', function(req, res, next){
 	Pharmacist.findOne({username: req.body.username}, function(err, user){
 		if(err){

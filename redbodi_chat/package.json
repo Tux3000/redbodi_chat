@@ -4,6 +4,7 @@
   "description": "Redbodi chat application",
   "dependencies": {
     "bcrypt": "^0.8.2",
+    "body-parser": "^1.12.3",
     "express": "4.11.2",
     "jwt-simple": "^0.3.0",
     "mongoose": "^4.0.2",

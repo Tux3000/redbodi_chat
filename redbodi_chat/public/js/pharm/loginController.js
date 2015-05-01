@@ -6,5 +6,9 @@
 
 	function LoginController(){
 		var vm = this;
+
+		this.login = function(){
+			alert('you pressed login');
+		};
 	}
 })();

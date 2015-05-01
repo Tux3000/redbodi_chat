@@ -1,26 +1,34 @@
-<div class='container'>
-	<div class="row" style="padding-top:40px">
-		<div ng-controller='SignupCtrl as signup' class="col-md-5">
-			<div class='panel panel-primary'>
-				<div class='panel-heading'>
-					<span>Register</span>
+<div class="container">
+	<div class="col-lg-offset-4 col-lg-4">
+		<div class="panel panel-primary">
+			<div class="panel-heading">Sign up</div>
+			<form class="ng-invalid ng-invalid-required ng-dirty ng-valid-match ng-invalid-email" novalidate="" action="/pharmRegister" method="post" name="form">
+				<div class="form-group">
+					<label class="control-label" for="username">Username</label>
+					<input id="username" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-is-taken ng-valid-invalid-chars" type="text" autofocus="" ng-model="name" required="" unique-username="" placeholder="Username" name="username">
+					<i class="halflings-icon refresh rotating" ng-show="busy" style="display: none;"></i>
+					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.required" style="display: none;">Please choose a username</span>
+					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.isTaken" style="display: none;">Username already taken</span>
+					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.invalidChars" style="display: none;">Username may not contain any non-url-safe characters</span>
 				</div>
-
-				<div class='panel-body'>
-					<div class='input-group'>
-						<input ng-model='signup.name' class='form-control input-sm' placeholder='What is your name?' tooltip='Tell us your name, so patients know who you are.' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
-						<input ng-model='signup.email' class='form-control input-sm' placeholder='What is your email address?' tooltip='We need this to varify that you are a pharmacist' tooltip-trigger='mouseenter' tooltip-placement='bottom'/>
-						<select ng-model='signup.orgCode' class='form-control input-sm' ng-options='org for org in signup.organisations'>
-							<option></option>
-						</select>
-						<input type='password' class='form-control input-sm' ng-model='login.password' placeholder='Please choose a password'/>
-						<input type='password' class='form-control input-sm' ng-model='login.passwordConfirm' placeholder='Please confirm your choosen password'/>
-						<span><a href="#login">Already a user?</a></span>
-					</div>
+				<div class="form-group">
+					<label class="control-label" for="email">Email</label>
+					<input id="email" class="form-control ng-dirty ng-valid-required ng-invalid ng-invalid-email" type="email" required="" placeholder="Email" name="email" ng-model="email">
+					<span class="help-block" ng-show="form.email.$dirty && form.email.$error.email" style="">Email is invalid</span>
 				</div>
-			</div>
+				<div class="form-group">
+					<label class="control-label" for="password">Password</label>
+					<input id="password" class="form-control ng-dirty ng-invalid ng-invalid-required ng-valid-match" type="password" match="verification" required="" ng-model="password" name="password">
+					<span class="help-block" ng-show="form.password.$dirty && form.password.$error.required" style="">Please enter a password</span>
+				</div>
+				<div class="form-group">
+					<label class="control-label" for="verification">Repeat password</label>
+					<input id="verification" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="password" required="" ng-model="verification" name="verification">
+					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.required" style="">Please repeat your password</span>
+					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.match && !form.verification.$error.required" style="">Passwords don't match</span>
+				</div>
+				<input class="btn btn-primary" type="submit" ng-disabled="form.$invalid" value="Sign up" disabled="disabled">
+			</form>
 		</div>
-
 	</div>
 </div>
-

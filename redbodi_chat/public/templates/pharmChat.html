@@ -1,153 +1,142 @@
-<html>
-	<head>
-		<link rel="stylesheet" href="components/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/map.css">
-		<link rel="stylesheet" href="css/chat.css">
-	</head>
-	<body ng-app='app'>
-		<div class="container">
-			<div class="row" style="padding-top:40px;">
-				<div class="col-md-4">
-					<div class="panel panel-primary">
-						<div class="panel-heading">Queued Conversations</div>
+<header>
+    <nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"></a>
+        </div>
 
-						<div ng-controller="ConvsCtrl as convController" class="panel-body">
-							<ul class='media-list'>
-								<li ng-repeat='conv in convController.convs' class='media'>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#/"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="#login"><i class="fa fa-shield"></i> Login</a></li>
+            <li><a href="#register"><i class="fa fa-comment"></i> Register</a></li>
+        </ul>
+    </div>
+    </nav>
+</header>
+
+<div class="container">
+	<div class="row" style="padding-top:40px;">
+		<div class="col-md-4">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Queued Conversations</div>
+
+				<div ng-controller="ConvsCtrl as convController" class="panel-body">
+					<ul class='media-list'>
+						<li ng-repeat='conv in convController.convs' class='media'>
+							<div class="media-body">
+								<div class="media">
+									<span class="pull-left">Avatar</span>
 									<div class="media-body">
-										<div class="media">
-											<span class="pull-left">Avatar</span>
-											<div class="media-body">
-												<h5>{{ conv.name }} | {{ conv.firstMessage }}</h5>
-												<small class="text-muted">{{ conv.dateTime }}</small>
-												<button ng-click='convController.joinConversation(conv.id)' class='btn btn-default'>Join</button>
-											</div>
-										</div>
+										<h5>{{ conv.name }} | {{ conv.firstMessage }}</h5>
+										<small class="text-muted">{{ conv.dateTime }}</small>
+										<button ng-click='convController.joinConversation(conv.id)' class='btn btn-default'>Join</button>
 									</div>
-									<hr />
-								</li>
-							</ul>
-						</div>
-					</div>
+								</div>
+							</div>
+							<hr />
+						</li>
+					</ul>
 				</div>
-				
-			  	<div ng-controller="ChatTabCtrl as tabController" class="col-md-5">
-			  		<tabset justified="true">
-					    <tab ng-repeat="(key, value) in tabController.chats" select="tabController.conversationSelected(key)" deselect="tabController.conversationDeselected(key)">
-					    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
-
-					    	<div ng-controller="MsgCtrl as messageController" class="panel panel-primary">
-					    		<div class="panel-heading">
-					    			<span class="glyphicon glyphicon-comment"></span> Chat
-				                        <div class="btn-group pull-right" dropdown>
-				                            <button type="button" class="btn btn-default btn-xs" dropdown-toggle>
-				                                <span class="glyphicon glyphicon-chevron-down"></span>
-				                            </button>
-				                            <ul class="dropdown-menu slidedown">
-				                                <li><a href="#"><span class="glyphicon glyphicon-refresh">
-				                                </span>Refresh</a></li>
-				                                <li><a href="#"><span class="glyphicon glyphicon-ok-sign">
-				                                </span>Available</a></li>
-				                                <li><a href="#"><span class="glyphicon glyphicon-remove">
-				                                </span>Busy</a></li>
-				                                <li><a href="#"><span class="glyphicon glyphicon-time"></span>
-				                                    Away</a></li>
-				                                <li class="divider"></li>
-				                                <li><a href="#"><span class="glyphicon glyphicon-off"></span>
-				                                    Sign Out</a></li>
-				                            </ul>
-				                        </div>
-				                        <!--</div>-->
-						    	</div>
-					    		<div class="panel-body">
-						    		<ul class="chat">
-						    			<li ng-repeat="chat in value.messages" class="{{chat.msgOptions.pullSide}} clearfix">
-						    				<span class="chat-img pull-{{chat.msgOptions.pullSide}}">
-		                                    <img src="http://placehold.it/50/{{chat.msgOptions.avatarColour}}/fff&text={{chat.msgOptions.avatar}}" alt="User Avatar" class="img-circle" />
-
-		                                	</span>
-
-
-
-					    					<div class="chat-body clearfix">
-					    						<div ng-if="chat.msgOptions.pullSide==='left'">
-			                                        <div class="header">
-			                                            <strong class=" primary-font"> {{ chat.sender }} </strong><small class="pull-right text-muted">
-			                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><!--TODO: time to come from model-->
-			                                        </div>
-			                                    </div>  
-			                                    <div ng-if="chat.msgOptions.pullSide==='right'">
-			                                        <div class="header">
-			                                            <small class=" text-muted">
-			                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><strong class="pull-right primary-font"> {{ chat.sender }} </strong><!--TODO: time to come from model-->
-			                                        </div>
-			                                    </div>  
-
-												<p>
-                                        			{{ chat.msg }}
-                                    			</p>
-					    					</div>
-						    			</li>
-						    		</ul>
-					    		</div>
-					    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{ alert.msg }}</alert>
-					    		<div class="panel-footer">
-					    			<div class="input-group">
-								  		<input ng-model='messageController.msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
-								  		<span class="input-group-btn">
-								  			<button ng-click='messageController.sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
-								  		</span>
-							  		</div>
-						  		</div>
-					    	</div>
-
-						  	<h3>User Location</h3>
-						  	<hr />
-						  	<div class="angular-google-map-container" ng-controller='LocCtrl as locationController'>
-
-						  		<label>Location Status: </label><span>{{ locationController.statusMsg }}</span>
-						  		<label>Latitude: </label><span>{{ locationController.latitude }}</span>
-						  		<label>Longitude: </label><span>{{ locationController.longitude }}</span>
-						  		<button ng-click='locationController.grabLocation(key)'>Grab User Location</button>
-
-						  		<ui-gmap-google-map center='locationController.map.center' zoom='locationController.map.zoom'>
-							  		
-
-						  			<ui-gmap-markers models="locationController.map.markers" idkey="'id'" coords="'coords'" icon="'icon'" options="'options'" isLabel='true' click="'onClick'" events="'events'">
-
-						  				<ui-gmap-windows coords="'self'" options="windowOptions" closeClick="closeClick()">
-		           							<div ng-non-bindable>{{title}}</div>
-		        						</ui-gmap-windows>
-
-		        					</ui-gmap-markers>
-			        					
-						  		</ui-gmap-google-map>
-						  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
-					    	</div>
-
-					    </tab>
-					  </tabset>
-			  	</div>
 			</div>
+		</div>
+		
+	  	<div ng-controller="ChatTabCtrl as tabController" class="col-md-5">
+
+	  		<tabset justified="true">
+			    <tab ng-repeat="(key, value) in tabController.chats" select="tabController.conversationSelected(key)" deselect="tabController.conversationDeselected(key)">
+			    	<tab-heading>{{ value.messages[0].sender }} <span ng-if="value.unreadMessages > 0">{{ value.unreadMessages }}<i class="glyphicon glyphicon-comment"></i></span></tab-heading>
+
+			    	<div ng-controller="MsgCtrl as messageController" class="panel panel-primary">
+			    		<div class="panel-heading">
+			    			<span class="glyphicon glyphicon-comment"></span> Chat
+		                        <div class="btn-group pull-right" dropdown>
+		                            <button type="button" class="btn btn-default btn-xs" dropdown-toggle>
+		                                <span class="glyphicon glyphicon-chevron-down"></span>
+		                            </button>
+		                            <ul class="dropdown-menu slidedown">
+		                                <li><a href="#"><span class="glyphicon glyphicon-refresh">
+		                                </span>Refresh</a></li>
+		                                <li><a href="#"><span class="glyphicon glyphicon-ok-sign">
+		                                </span>Available</a></li>
+		                                <li><a href="#"><span class="glyphicon glyphicon-remove">
+		                                </span>Busy</a></li>
+		                                <li><a href="#"><span class="glyphicon glyphicon-time"></span>
+		                                    Away</a></li>
+		                                <li class="divider"></li>
+		                                <li><a href="#"><span class="glyphicon glyphicon-off"></span>
+		                                    Sign Out</a></li>
+		                            </ul>
+		                        </div>
+		                        <!--</div>-->
+				    	</div>
+			    		<div class="panel-body">
+				    		<ul class="chat">
+				    			<li ng-repeat="chat in value.messages" class="{{chat.msgOptions.pullSide}} clearfix">
+				    				<span class="chat-img pull-{{chat.msgOptions.pullSide}}">
+                                    <img src="http://placehold.it/50/{{chat.msgOptions.avatarColour}}/fff&text={{chat.msgOptions.avatar}}" alt="User Avatar" class="img-circle" />
+
+                                	</span>
+
+
+
+			    					<div class="chat-body clearfix">
+			    						<div ng-if="chat.msgOptions.pullSide==='left'">
+	                                        <div class="header">
+	                                            <strong class=" primary-font"> {{ chat.sender }} </strong><small class="pull-right text-muted">
+	                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><!--TODO: time to come from model-->
+	                                        </div>
+	                                    </div>  
+	                                    <div ng-if="chat.msgOptions.pullSide==='right'">
+	                                        <div class="header">
+	                                            <small class=" text-muted">
+	                                            <span class="glyphicon glyphicon-time"></span> n mins ago</small><strong class="pull-right primary-font"> {{ chat.sender }} </strong><!--TODO: time to come from model-->
+	                                        </div>
+	                                    </div>  
+
+										<p>
+                                			{{ chat.msg }}
+                            			</p>
+			    					</div>
+				    			</li>
+				    		</ul>
+			    		</div>
+			    		<alert ng-repeat="alert in alerts" type="success" close="closeAlert($index)">{{ alert.msg }}</alert>
+			    		<div class="panel-footer">
+			    			<div class="input-group">
+						  		<input ng-model='messageController.msgToSend' class='form-control input-sm' placeholder="Type your message here..."/>
+						  		<span class="input-group-btn">
+						  			<button ng-click='messageController.sendMessage(key)' class='btn btn-warning btn-sm' id="btn-chat">Send</button>
+						  		</span>
+					  		</div>
+				  		</div>
+			    	</div>
+
+				  	<h3>User Location</h3>
+				  	<hr />
+				  	<div class="angular-google-map-container" ng-controller='LocCtrl as locationController'>
+
+				  		<label>Location Status: </label><span>{{ locationController.statusMsg }}</span>
+				  		<label>Latitude: </label><span>{{ locationController.latitude }}</span>
+				  		<label>Longitude: </label><span>{{ locationController.longitude }}</span>
+				  		<button ng-click='locationController.grabLocation(key)'>Grab User Location</button>
+
+				  		<ui-gmap-google-map center='locationController.map.center' zoom='locationController.map.zoom'>
+					  		
+
+				  			<ui-gmap-markers models="locationController.map.markers" idkey="'id'" coords="'coords'" icon="'icon'" options="'options'" isLabel='true' click="'onClick'" events="'events'">
+
+				  				<ui-gmap-windows coords="'self'" options="windowOptions" closeClick="closeClick()">
+           							<div ng-non-bindable>{{title}}</div>
+        						</ui-gmap-windows>
+
+        					</ui-gmap-markers>
+	        					
+				  		</ui-gmap-google-map>
+				  		<!--TODO: replace with google maps and a list of nearby pharmacies-->
+			    	</div>
+
+			    </tab>
+			  </tabset>
 	  	</div>
-
-
-		<script src="http://maps.googleapis.com/maps/api/js?sensor=false&amp;language=en"></script>
-		<script src="components/socket.io-client/socket.io.js"></script>
-		<script src="components/angularjs/angular.js"></script>
-		<script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
-		<script src="components/angular-socket-io/socket.js"></script>
-		<script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-		<script src="components/lodash/dist/lodash.js"></script>
-		<script src="components/angular-google-maps/dist/angular-google-maps.js"></script>
-		<script src="js/pharm/pharmApp.js"></script>
-		<script src="js/ioSocketFactory.js"></script>
-		<script src="js/msgOptionsServiceFactory.js"></script>
-		<script src="js/pharm/markerCreatorServiceFactory.js"></script>
-		<script src="js/pharm/conversationServiceFactory.js"></script>
-		<script src="js/pharm/chatTabController.js"></script>
-		<script src="js/pharm/conversationController.js"></script>
-		<script src="js/pharm/mapController.js"></script>
-		<script src="js/pharm/pharmMessageController.js"></script>		
-	</body>
-</html>
+	</div>
+</div>
