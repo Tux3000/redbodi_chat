@@ -1,29 +1,38 @@
-<div class="container">
+<div class="container" ng-controller='RegistrationCtrl as register'>
 	<div class="col-lg-offset-4 col-lg-4">
 		<div class="panel panel-primary">
 			<div class="panel-heading">Sign up</div>
-			<form class="ng-invalid ng-invalid-required ng-dirty ng-valid-match ng-invalid-email" novalidate="" action="/pharmRegister" method="post" name="form">
+			<form class="ng-invalid ng-invalid-required ng-dirty ng-valid-match ng-invalid-email" novalidate="" ng-submit name="form">
 				<div class="form-group">
 					<label class="control-label" for="username">Username</label>
-					<input id="username" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-is-taken ng-valid-invalid-chars" type="text" autofocus="" ng-model="name" required="" unique-username="" placeholder="Username" name="username">
-					<i class="halflings-icon refresh rotating" ng-show="busy" style="display: none;"></i>
-					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.required" style="display: none;">Please choose a username</span>
-					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.isTaken" style="display: none;">Username already taken</span>
-					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.invalidChars" style="display: none;">Username may not contain any non-url-safe characters</span>
+					<input id="username" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-invalid-chars" type="text" autofocus="" ng-model="register.name" required="" placeholder="Username" name="username" valid-chars=''>
+					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.invalidChars" style="">Username may not contain any non-url-safe characters</span>
+					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.required" style="">Please enter your name</span>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="email">Email</label>
-					<input id="email" class="form-control ng-dirty ng-valid-required ng-invalid ng-invalid-email" type="email" required="" placeholder="Email" name="email" ng-model="email">
+					<input id="email" class="form-control ng-dirty ng-valid-required ng-invalid ng-invalid-email" type="email" required="" placeholder="Email" name="email" ng-model="register.email">
 					<span class="help-block" ng-show="form.email.$dirty && form.email.$error.email" style="">Email is invalid</span>
 				</div>
+				
+				<div class="form-group">
+					<label class="control-label" for="orgCode">Organisation Code</label>
+					<input id="orgCode" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-is-taken ng-valid-invalid-chars" type="text" ng-model="register.orgCode" required="" valid-chars="" valid-org=''placeholder="Organisation Code" name="orgCode">
+					<i class="halflings-icon refresh rotating" ng-show="busy" style=""></i>
+					<span class="help-block" ng-show="form.orgCode.$dirty && form.orgCode.$error.required" style=''>Please enter your organisation code</span>
+					<span class="help-block" ng-show="form.orgCode.$dirty && form.orgCode.$error.validOrg" style="">Organisation Code not recognized</span>
+					<span class="help-block" ng-show="form.orgCode.$dirty && form.orgCode.$error.invalidChars" style="">Organisation may not contain any non-url-safe characters</span>
+				</div>
+
+
 				<div class="form-group">
 					<label class="control-label" for="password">Password</label>
-					<input id="password" class="form-control ng-dirty ng-invalid ng-invalid-required ng-valid-match" type="password" match="verification" required="" ng-model="password" name="password">
+					<input id="password" class="form-control ng-dirty ng-invalid ng-invalid-required ng-valid-match" type="password" match="verification" required="" ng-model="register.password" name="password">
 					<span class="help-block" ng-show="form.password.$dirty && form.password.$error.required" style="">Please enter a password</span>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="verification">Repeat password</label>
-					<input id="verification" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="password" required="" ng-model="verification" name="verification">
+					<input id="verification" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="password" required="" ng-model="register.verification" name="verification">
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.required" style="">Please repeat your password</span>
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.match && !form.verification.$error.required" style="">Passwords don't match</span>
 				</div>

@@ -40,6 +40,11 @@ app.post('/pharmRegister', function(req, res) {
 	//TODO: add registration
 });
 
+app.get('/pharm/check/organisation', function(req, res) {
+	//TODO: look up organisation code in database
+		//return the code and the json object id, which will save another db read when adding a joining pharm document
+	res.status(403).json({invalidOrg: true});
+});
 
 app.post('/session', function(req, res, next){
 	Pharmacist.findOne({username: req.body.username}, function(err, user){
