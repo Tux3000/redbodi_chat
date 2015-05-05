@@ -42,8 +42,9 @@
 				return {
 					require: 'ngModel',
 					link: function (scope, elem, attrs, ctrl) {
-
+						alert('match');
 						scope.$watch('[' + attrs.ngModel + ', ' + attrs.match + ']', function(value){
+							alert(value[0] . ' ' . value[1]);
 							ctrl.$setValidity('match', value[0] === value[1] );
 						}, true);
 

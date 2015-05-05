@@ -7,7 +7,8 @@ var uuid = require('node-uuid');
 var jwt = require('jwt-simple');
 var bcrypt = require('bcrypt');
 var Conversation = require('./conversation.js');
-var Pharmacist = require('./pharmacist');
+var Pharmacist = require('./models/pharmacist');
+var Pharmacy = require('./models/pharmacy');
 app.use(require('body-parser').json());
 
 var people = {};
@@ -41,6 +42,20 @@ app.post('/pharmRegister', function(req, res) {
 });
 
 app.get('/pharm/check/organisation', function(req, res) {
+	console.log(req);
+	Pharmacy.findOne({OrgCode: req.body.orgCode})
+			.select('Name')
+			.exec(function(err, pharma){
+				if(err) { 
+					return next(err);
+				}
+				if(!pharma) {
+					console.log('pharm not found')
+					return res.status.json({invalidOrg: true});
+				}
+				pharma.invalidOrg = false;
+				return res.status(200).json(pharma);
+			});
 	//TODO: look up organisation code in database
 		//return the code and the json object id, which will save another db read when adding a joining pharm document
 	res.status(403).json({invalidOrg: true});

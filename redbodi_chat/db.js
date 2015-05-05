@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/pharmacies', function(){
+mongoose.connect('mongodb://localhost/redbodi/pharmacies/', function(){
 	console.log('mongodb connected');
 });
 
