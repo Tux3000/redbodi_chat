@@ -16,9 +16,14 @@
 						return;
 					}
 					scope.busy = true;
-					$http.get('/pharm/check/organisation', {orgCode: value})
+					$http.post('/pharm/check/organisation', {orgCode: value})
 						.success(function(data) {
 							scope.busy = false;
+							scope.name = data.Name;
+							scope.address1 = data.Address1;
+							scope.address2 = data.Address2;
+							scope.address3 = data.Address3;
+							scope.postCode = data.PostCode;
 						}).error(function(data) {
 							if(data.invalidOrg){
 								ctrl.$setValidity('validOrg', false);
