@@ -7,7 +7,7 @@ var uuid = require('node-uuid');
 var jwt = require('jwt-simple');
 var bcrypt = require('bcrypt');
 var Conversation = require('./conversation.js');
-//var Pharmacist = require('./models/pharmacist');
+var Pharmacist = require('./models/pharmacist');
 var Pharmacy = require('./models/pharmacy');
 app.use(require('body-parser').json());
 

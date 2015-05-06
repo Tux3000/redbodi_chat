@@ -1,8 +1,9 @@
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/pharmacists');
-var pharmacist = mongoose.Schema({
-	username: String,
-	password: {type: String, select: false}
+var db = require('../dbPharmacist');
+var Pharmacist = db.Schema({
+	name: { type: String, required: true },
+	email: { type: String, required: true },
+	orgCode: { type: String, required: true },
+	password: { type: String, required: true, select: false }
 });
 
-module.exports = mongoose.model('Pharmacist', pharmacist);
+module.exports = db.model('Pharmacist', Pharmacist);
