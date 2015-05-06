@@ -4,10 +4,10 @@
 			<div class="panel-heading">Sign up</div>
 			<form class="ng-invalid ng-invalid-required ng-dirty ng-valid-match ng-invalid-email" novalidate="" ng-submit name="form">
 				<div class="form-group">
-					<label class="control-label" for="username">Username</label>
-					<input id="username" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-invalid-chars" type="text" autofocus="" ng-model="register.name" required="" placeholder="Username" name="username" valid-chars=''>
-					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.invalidChars" style="">Username may not contain any non-url-safe characters</span>
-					<span class="help-block" ng-show="form.username.$dirty && form.username.$error.required" style="">Please enter your name</span>
+					<label class="control-label" for="name">Name</label>
+					<input id="name" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-invalid-chars" type="text" autofocus="" ng-model="register.name" required="" placeholder="Name" name="name" valid-chars=''>
+					<span class="help-block" ng-show="form.name.$dirty && form.name.$error.invalidChars" style="">Username may not contain any non-url-safe characters</span>
+					<span class="help-block" ng-show="form.name.$dirty && form.name.$error.required" style="">Please enter your name</span>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="email">Email</label>
@@ -43,7 +43,7 @@
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.required" style="">Please repeat your password</span>
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.match && !form.verification.$error.required" style="">Passwords don't match</span>
 				</div>
-				<input class="btn btn-primary" type="submit" ng-disabled="form.$invalid" value="Sign up" disabled="disabled">
+				<input class="btn btn-primary" type="submit" ng-disabled="form.$invalid" value="Sign up" disabled="disabled" ng-click='register.register(orgCode)'>
 			</form>
 		</div>
 	</div>

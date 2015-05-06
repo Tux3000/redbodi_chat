@@ -24,6 +24,7 @@
 							scope.address2 = data.Address2;
 							scope.address3 = data.Address3;
 							scope.postCode = data.PostCode;
+							scope.orgCode = data._id;
 						}).error(function(data) {
 							if(data.invalidOrg){
 								ctrl.$setValidity('validOrg', false);
