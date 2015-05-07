@@ -34,12 +34,12 @@
 
 				<div class="form-group">
 					<label class="control-label" for="password">Password</label>
-					<input id="password" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="verification" required="" ng-model="password" name="password">
+					<input id="password" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="verification" required="" ng-model="register.password" name="password">
 					<span class="help-block" ng-show="form.password.$dirty && form.password.$error.required" style="">Please enter a password</span>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="verification">Repeat password</label>
-					<input id="verification" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="password" required="" ng-model="verification" name="verification">
+					<input id="verification" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-match" type="password" match="password" required="" ng-model="register.verification" name="verification">
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.required" style="">Please repeat your password</span>
 					<span class="help-block" ng-show="form.verification.$dirty && form.verification.$error.match && !form.verification.$error.required" style="">Passwords don't match</span>
 				</div>
