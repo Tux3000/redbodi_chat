@@ -24,7 +24,7 @@ app.use('/components', express.static(__dirname + '/components'));
 app.use('/js', express.static(__dirname + '/js'));
 app.use('/css', express.static(__dirname + '/css'));
 app.use('/api/sessions', require('./controllers/api/sessions'));
-app.ust('/api/pharmacist', require('./controllers/api/pharmacists'));
+app.use('/api/pharmacists', require('./controllers/api/pharmacists'));
 
 app.get('/', function(req, res){
   res.sendFile(__dirname +'/public/userChat.html');
@@ -32,15 +32,6 @@ app.get('/', function(req, res){
 
 app.get('/pharm', function(req, res){
 	res.sendFile(__dirname + '/public/pharm.html');
-});
-
-app.get('/pharmRegister', function(req, res){
-	res.sendFile(__dirname + '/public/pharm.html');
-});
-
-app.post('/pharmRegister', function(req, res) {
-	console.log('registering');
-
 });
 
 app.post('/pharm/check/organisation', function(req, res) {

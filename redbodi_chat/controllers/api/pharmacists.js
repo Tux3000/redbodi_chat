@@ -18,16 +18,24 @@ router.get('/', function(req, res, next){
 	});
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', function (req, res, next) {
 	//TODO: makesure that req.body.pharmId matches supplied req.body.orgCode - validation essentially!!
 	var pharmacist = new Pharmacist({
 		name: req.body.name,
 		email: req.body.email,
 		orgId: req.body.pharmId,//TODO: change to orgId
 	});
-	bcrypt.hash(req.body.password, 10, function(err, hash){
+	bcrypt.hash(req.body.password, 10, function (err, hash){
 		if(err){
 			return next(err);
 		}
+		pharmacist.password = hash;
+		pharmacist.save(function (err){
+			if(err){
+				return next(err);
+				res.status(201);
+			}
+		});
 	});
 });
+module.exports = router;
