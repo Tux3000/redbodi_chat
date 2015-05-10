@@ -17,7 +17,7 @@
 				
 				<div class="form-group">
 					<label class="control-label" for="orgCode">Organisation Code</label>
-					<input id="orgCode" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-invalid-chars" type="text" ng-model="register.orgCode" required="" valid-chars="" valid-org=''placeholder="Organisation Code" name="orgCode">
+					<input id="orgCode" class="form-control ng-pristine ng-invalid ng-invalid-required ng-valid-invalid-chars" type="text" ng-model="register.orgCode" required="" valid-chars="" valid-org='' upper='register.orgCode' placeholder="Organisation Code" name="orgCode">
 					<i class="halflings-icon refresh rotating" ng-show="busy" style=""></i>
 					<span class="help-block" ng-show="form.orgCode.$dirty && form.orgCode.$error.required" style=''>Please enter your organisation code</span>
 					<span class="help-block" ng-show="form.orgCode.$dirty && form.orgCode.$error.validOrg" style="">Organisation Code not recognized</span>

@@ -44,9 +44,24 @@
 					require: 'ngModel',
 					controllerAs: 'vm',
 					link: function (scope, elem, attrs, ctrl) {
+
 						scope.$watch('[' + attrs.ngModel + ', ' + attrs.match + ']', function(value){
 							ctrl.$setValidity('match', value[0] === value[1] );
 						}, true);
+					}
+				}
+			}])
+			.directive('upper', [function () {
+				return{
+					require: 'ngModel',
+					controllerAs: 'vm',
+					link: function(scope, elem, attrs, ctrl) {
+						scope.$watch(attrs.ngModel, function(value) {
+							if(value && value.length > 0){
+								value = value.toUpperCase();
+								scope.$emit('orgCodeUpdate', value);
+							}
+						});
 					}
 				}
 			}]);

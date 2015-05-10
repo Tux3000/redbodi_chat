@@ -23,7 +23,8 @@ router.post('/', function (req, res, next) {
 	var pharmacist = new Pharmacist({
 		name: req.body.name,
 		email: req.body.email,
-		orgId: req.body.pharmId,//TODO: change to orgId
+		orgCode: req.body.orgId,
+		password: req.body.password
 	});
 	bcrypt.hash(req.body.password, 10, function (err, hash){
 		if(err){

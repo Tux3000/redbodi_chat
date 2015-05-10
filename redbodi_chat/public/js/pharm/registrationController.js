@@ -4,7 +4,7 @@
 		.module('app')
 		.controller('RegistrationCtrl', RegistrationController);
 
-	function RegistrationController(PharmacistService){
+	function RegistrationController(PharmacistService, $scope){
 		var vm = this;	
 
 		vm.register = function(orgId){
@@ -18,5 +18,9 @@
 			};
 			PharmacistService.register(pharmacist);
 		};
+
+		$scope.$on('orgCodeUpdate', function (eventName, value) {
+			vm.orgCode = value;
+		});
 	}
 })();
