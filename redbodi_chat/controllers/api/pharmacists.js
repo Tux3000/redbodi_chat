@@ -23,8 +23,7 @@ router.post('/', function (req, res, next) {
 	var pharmacist = new Pharmacist({
 		name: req.body.name,
 		email: req.body.email,
-		orgCode: req.body.orgId,
-		password: req.body.password
+		orgCode: req.body.orgId
 	});
 	bcrypt.hash(req.body.password, 10, function (err, hash){
 		if(err){
@@ -34,8 +33,8 @@ router.post('/', function (req, res, next) {
 		pharmacist.save(function (err){
 			if(err){
 				return next(err);
-				res.status(201);
 			}
+			return res.status(201).json({ success: true });
 		});
 	});
 });

@@ -18,9 +18,5 @@
 			};
 			PharmacistService.register(pharmacist);
 		};
-
-		$scope.$on('orgCodeUpdate', function (eventName, value) {
-			vm.orgCode = value;
-		});
 	}
 })();

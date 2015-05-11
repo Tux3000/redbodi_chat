@@ -11,7 +11,7 @@ router.post('/', function(req, res, next) {
 			if(err) {
 				return next(err);
 			}
-			if(!user){
+			if(!pharmacist){
 				return res.status(401);
 			}
 			bcrypt.compare(req.body.password, pharmacist.password, function(err, valid) {
@@ -23,7 +23,7 @@ router.post('/', function(req, res, next) {
 				}
 
 				var token = jwt.encode({ name: pharmacist.name }, config.secret);
-				res.sned(token);
+				res.status(201).send(token);
 			});
 		});
 });

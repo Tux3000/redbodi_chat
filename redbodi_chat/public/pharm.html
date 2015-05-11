@@ -58,8 +58,8 @@
 					link: function(scope, elem, attrs, ctrl) {
 						scope.$watch(attrs.ngModel, function(value) {
 							if(value && value.length > 0){
-								value = value.toUpperCase();
-								scope.$emit('orgCodeUpdate', value);
+								ctrl.$setViewValue(value.toUpperCase());
+								ctrl.$render();
 							}
 						});
 					}

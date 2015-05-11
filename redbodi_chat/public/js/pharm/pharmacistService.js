@@ -8,8 +8,11 @@
 		var svc = this;
 		svc.getUser = function () {
 			return $http.get('/api/pharmacists')
-				.then(function (response) {
+				.success(function (response) {
+					alert(response);
+					alert(response.data);
 					return response.data;
+				}).error(function (response) {
 				});
 		}
 
@@ -25,12 +28,13 @@
 		}
 
 		svc.register = function (pharmacist) {
-			alert('test');
 			$http.post('/api/pharmacists', pharmacist)
 				.success(function (data) {
+					alert('registered');
 					svc.login(pharmacist.name, pharmacist.password);
 				})
-				.error(function (data){});
+				.error(function (data) { 
+				});
 		}
 	}
 })();
