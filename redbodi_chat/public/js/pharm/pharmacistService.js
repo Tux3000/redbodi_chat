@@ -26,6 +26,7 @@
 		svc.register = function (pharmacist) {
 			$http.post('/api/pharmacists', pharmacist)
 				.success(function (data) {
+					window.location.href = '#/';
 					return svc.login(pharmacist.name, pharmacist.password);
 				})
 				.error(function (data) { 

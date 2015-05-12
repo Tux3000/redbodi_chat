@@ -4,7 +4,7 @@
 		.module('app')
 		.controller('RegistrationCtrl', RegistrationController);
 
-	function RegistrationController(PharmacistService, $scope){
+	function RegistrationController(PharmacistService, $scope, $window){
 		var vm = this;	
 
 		vm.register = function(orgId){
