@@ -6,12 +6,14 @@ var config = require('../../config');
 
 router.get('/', function(req, res, next){
 	if(!req.headers['x-auth']){
+		console.log('no x-auth header');
 		return res.status(401);
 	}
 
-	var auth = jwt.decode(req.header['x-auth'], config.secret);
+	var auth = jwt.decode(req.headers['x-auth'], config.secret);
 	Pharmacist.findOne({ name: auth.name }, function(err, pharmacist){
 		if(err){
+			console.log(err);
 			return next(err);
 		}
 		res.status(201).json(pharmacist)
