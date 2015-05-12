@@ -10,14 +10,12 @@ var Conversation = require('./conversation.js');
 var Pharmacist = require('./models/pharmacist');
 var Pharmacy = require('./models/pharmacy');
 app.use(require('body-parser').json());
+app.use(require('./auth'));
 
 var people = {};
 var conversations = {};
 var clients = [];
 var queuedConversations = [];
-//TODO: stick key in config and omit from repo.
-var secretKey = "secretKey"; // This is for dev only!
-
 
 app.use(express.static(__dirname + '/public'));
 app.use('/components', express.static(__dirname + '/components'));
@@ -31,7 +29,11 @@ app.get('/', function(req, res){
 });
 
 app.get('/pharm', function(req, res){
-	res.sendFile(__dirname + '/public/pharm.html');
+	if(req.auth) {
+		res.sendFile(__dirname + '/public/pharm.html');
+	}else{
+		res.sendStatus(401);
+	}
 });
 
 app.post('/pharm/check/organisation', function(req, res) {
@@ -51,48 +53,6 @@ app.post('/pharm/check/organisation', function(req, res) {
 				pharma.invalidOrg = false;
 				return res.status(200).json(pharma);
 			});
-});
-
-app.post('/session', function(req, res, next){
-	Pharmacist.findOne({username: req.body.username}, function(err, user){
-		if(err){
-			return next(err);
-		}
-		if(!user){
-			return res.sendStatus(401);
-		}
-		bcrypt.compare(req.body.password, user.password, function(err, valid){
-			if(err){
-				return next(err);
-			}
-			if(!valid){
-				res.sendStatus(401);
-			}
-			var token = jwt.encode({username: user.username},'secretKey');
-			res.json(token);
-		});
-	});
-});
-
-app.get('/pharmacist', function(req, res) {
-	var token = req.headers['x-auth'];
-	var auth = jwt.decode(token, secretKey);
-	Pharmacist.findOne({username: auth.username}, function(err, pharm){
-		res.json(pharm);
-	});
-});
-
-app.post('/pharmacist', function(req, res, next) {
-	var phamacist = new Pharmacist({username: req.body.username});
-	bcrypt.hash(req.body.password, 10, function (err, hash){
-		pharmacist.password = hash;
-		pharmacist.save(function(err){
-			if(err){
-				throw next(err);
-			}
-			res.sendStatus(201);
-		});
-	});
 });
 
 io.on('connection', function(client){

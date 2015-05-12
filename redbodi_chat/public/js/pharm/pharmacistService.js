@@ -6,7 +6,7 @@
 
 	function PharmacistService($http) {
 		var svc = this;
-		svc.getUser = function () {
+		svc.getPharmacist = function () {
 			return $http.get('/api/pharmacists')
 				.success(function (response) {
 					return response;
@@ -17,16 +17,16 @@
 		svc.login = function (name, password) {
 			return $http.post('/api/sessions', { name: name, password: password })
 				.success(function (response) {
-					window.localStorage.token = response.data;
-					$http.defaults.headers.common['X-Auth'] = response.data;
-					return svc.getUser();
-				}).error(function (response) { });
+					window.localStorage.token = response;
+					$http.defaults.headers.common['X-Auth'] = response;
+					window.location.href = '#/';
+					return svc.getPharmacist();
+				}).error(function (response) { alert('error') });
 		}
 
 		svc.register = function (pharmacist) {
 			$http.post('/api/pharmacists', pharmacist)
 				.success(function (data) {
-					window.location.href = '#/';
 					return svc.login(pharmacist.name, pharmacist.password);
 				})
 				.error(function (data) { 

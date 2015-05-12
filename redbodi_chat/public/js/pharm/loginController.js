@@ -4,11 +4,10 @@
 		.module('app')
 		.controller('LoginCtrl', LoginController);
 
-	function LoginController(){
+	function LoginController(PharmacistService){
 		var vm = this;
-
-		this.login = function(){
-			alert('you pressed login');
-		};
+		vm.login = function (){
+			PharmacistService.login(vm.name, vm.password);
+		}
 	}
 })();
