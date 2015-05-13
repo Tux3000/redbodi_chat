@@ -13,19 +13,13 @@
     			v: '3.17'
     		});
     		$routeProvider
-
-		            // route for the home page
 		            .when('/', {
 		                templateUrl : 'templates/pharmChat.html'
 		            })
-
-		            // route for the about page
 		            .when('/login', {
 		                templateUrl : 'templates/login.html',
 		                controller  : 'LoginCtrl'
 		            })
-
-		            // route for the contact page
 		            .when('/register', {
 		                templateUrl : 'templates/register.html',
 		                controller  : 'RegistrationCtrl'
