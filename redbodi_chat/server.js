@@ -43,6 +43,7 @@ app.post('/pharmacies', function (req, res) {
 		.select('PostCode')
 		.select('Tel')
 		.select('loc')
+		.limit(5)
 		.exec(function (err, pharmacies) {
 			if(err){
 				console.log(err);

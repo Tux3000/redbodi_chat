@@ -9,7 +9,7 @@
 			require: 'ngModel',
 			link: function(scope, elem, attrs, ctrl) {
 				scope.busy = false;
-				scope.$watch(attrs.ngModel, function(value) {
+				scope.$watch(attrs.ngModel, function (value) {
 					ctrl.$setValidity('validOrg', true);
 
 					if(!value) {
