@@ -20,9 +20,9 @@
 					//TODO: refactor into method
 					for(var i = 0; i < pharmacies.length; i++) {
 						var pharmacy = pharmacies[i];
-						var message = 'Name: ' + pharmacy.Name + ' Address:' + pharmacy.Address1 + ', ' + pharmacy.PostCode + ' Tel:' + pharmacy.Tel
-						var pharmMaker = vm.createMarker(pharmacy.loc.coordinates[0], pharmacy.loc.coordinates[1]);
-						vm.map.markers.push(pharmMarker);
+						var message = 'Name: ' + pharmacy.Name + ' Address:' + pharmacy.Address1 + ', ' + pharmacy.PostCode + ' Tel:' + pharmacy.Tel;
+						var pharmMaker = vm.createMarker(pharmacy.loc.coordinates[0], pharmacy.loc.coordinates[1], message);
+						vm.map.markers.push(pharmMaker);
 					}
 				})
 				.error(function (data) {
@@ -32,7 +32,6 @@
 
 		vm.createMarker = function (latitude, longitude, message){
 			var tempMarker = null;
-
 			MarkerCreatorService.createByCoords(latitude, longitude, message, function (marker){
 				tempMarker = marker;
 			});
@@ -53,10 +52,6 @@
 				markers: []
 			};
 
-			//vm.userMarker = vm.createMarker(latitude, longitude, "User is here");
-			/*MarkerCreatorService.createByCoords(latitude, longitude, "User is here", function(marker){
-				vm.userMarker = marker;
-			});*/
 			vm.userMarker = vm.createMarker(latitude, longitude, 'User is here');
 			vm.map.markers.push(vm.userMarker);
 			vm.getPharmacies(vm.latitude, vm.longitude);

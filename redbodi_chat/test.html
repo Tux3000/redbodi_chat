@@ -1,0 +1,43 @@
+<html>
+<body ng-app='app'>
+	<div class='container' ng-controller='PharmController'>
+		<button ng-click='getPharmacies()'>Get Pharmacies</button>
+	</div>
+
+	<script src="components/socket.io-client/socket.io.js"></script>
+    <script src="components/angularjs/angular.js"></script>
+    <script src="components/angularjs-scroll-glue/src/scrollglue.js"></script>
+    <script src="components/angular-route/angular-route.js"></script>
+
+    <script>
+    	var app = angular.module('app', ['ngRoute'])
+    		.controller('PharmController', function ($scope, $http) {
+    			$scope.pharms = [];
+    			$scope.getPharmacies = function (){
+    				var givenLatitude = 52.785499699999995;
+    				var givenLongitude =  -2.1244264;
+    				$http.post('/pharmacies', { lat: givenLatitude, long: givenLongitude })
+    					.success(function (pharmacies) {
+    						for (var i =0; i < pharmacies.length; i++){
+    							var currentPharmacy = pharmacies[i];
+
+    							var pharmacy = {
+    								name: currentPharmacy.Name,
+    								tel: currentPharmacy.Tel,
+    								lat: currentPharmacy.loc.coordinates[0],
+    								long: currentPharmacy.loc.coordinates[1],
+    								postcode: currentPharmacy.PostCode
+    							};
+    							alert(pharmacy.name + ' ' + pharmacy.lat + ' ' + pharmacy.long);
+    							$scope.pharms.push(pharmacy);
+    						}
+    					})
+    					.error(function (data){
+    						alert('something went wrong');
+    					});
+    			}
+    		});
+    </script>
+
+</body>
+</html>

@@ -24,6 +24,10 @@ app.use('/css', express.static(__dirname + '/css'));
 app.use('/api/sessions', require('./controllers/api/sessions'));
 app.use('/api/pharmacists', require('./controllers/api/pharmacists'));
 
+app.get('/test', function (req, res) { 
+	res.sendFile(__dirname + '/test.html')
+});
+
 app.get('/', function (req, res){
   res.sendFile(__dirname +'/public/userChat.html');
 });
